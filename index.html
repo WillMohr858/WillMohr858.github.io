@@ -653,7 +653,7 @@
             if(num < 0){
                 var flopcardstr = "flopcard"+(num*-1);
                 var flopcard = document.getElementById(flopcardstr);
-                if(flopcard.classList.contains('full') && sendback == 1){
+                if(sendback == 1 && flopcard.classList.contains('full')){
                             var sendback = flopcard.style.backgroundImage;
                             sendback = sendback.slice(16,-6);
                             var empdeckcard = document.getElementById(sendback);
