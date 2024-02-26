@@ -599,7 +599,11 @@
                         
                       
                         //add code to check if the flop is full and if it is call PostFB();
-                        
+                        Display_change(-(b+1),0);
+
+                        var deckcard = document.getElementById(spliced);
+                        deckcard.classList = "deck_empty";
+                        deckcard.style.backgroundImage = "none";
                         break;
                     }
                   }
@@ -614,7 +618,15 @@
 
 
         function Display_change(num,sendback) {
-        
+
+            if(num == 21){
+              reset();
+              return;
+            }
+            if(num == -6){
+              reset();
+              return;
+            }
             if(num < 0){
                 var flopcardstr = "flopcard"+(num*-1);
                 var flopcard = document.getElementById(flopcardstr);
