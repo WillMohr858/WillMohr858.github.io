@@ -520,6 +520,7 @@
             var str = 'card1';
             var spliced = img.slice(6, -4);
             var callPFB = 0;
+            var callPost = 0;
             if(document.getElementById(spliced).classList == 'deck_full'){
                 for(var i =1; i < 21; i++){
                     str = str.slice(0,4)+i;
@@ -579,14 +580,14 @@
 
 
                 if(callPFB != 1){
-                    var flopcardstr = "flopcard1";
+                  var flopcardstr = "flopcard1";
                   for(var b = 1; b < 4; b++){
                     flopcardstr = flopcardstr.slice(0,8)+b;
                     var flopcard = document.getElementById(flopcardstr);
                     var flopcardcomp = window.getComputedStyle(flopcard);
                     if(flopcardcomp.getPropertyValue('border-color') === 'rgb(255, 255, 0)'){
                         if(flopcard.classList.contains('full')){
-                            var sendback = card.style.backgroundImage;
+                            var sendback = flopcard.style.backgroundImage;
                             sendback = sendback.slice(16,-6);
                             var empdeckcard = document.getElementById(sendback);
                             empdeckcard.classList = "deck_full";
@@ -596,8 +597,34 @@
                         flopcard.style.backgroundImage = "url('largecards/" + spliced + ".png')";
                         flopcard.classList = "full";
 
+                        
+                      
                         //add code to check if the flop is full and if it is call PostFB();
+                        if(b == 1){
+                          var flopcard2 = document.getElementById("flopcard2");
+                          var flopcard3 = document.getElementById("flopcard3");
+                          if(flopcard2.classList.contains('full') && flopcard3.classList.contains('full')){
+                            callPost = 1;
+                          }
+                        }else if(b == 2){
+                          var flopcard1 = document.getElementById("flopcard1");
+                          var flopcard3 = document.getElementById("flopcard3");
+                          if(flopcard1.classList.contains('full') && flopcard3.classList.contains('full')){
+                            callPost = 1;
+                          }
+                        }else{
+                          var flopcard2 = document.getElementById("flopcard2");
+                          var flopcard1 = document.getElementById("flopcard1");
+                          if(flopcard1.classList.contains('full') && flopcard2.classList.contains('full')){
+                            callPost = 1;
+                          }
+                        }
+                      
+                        Display_change(-(b+1),0);
 
+                        var deckcard = document.getElementById(spliced);
+                        deckcard.classList = "deck_empty";
+                        deckcard.style.backgroundImage = "none";
                         break;
                     }
                   }
@@ -605,16 +632,27 @@
                 
             }
             if(callPFB == 1){
-                PFB();
+                setTimeout(PFB, 50);
+            }else if(callPost == 1){
+                setTimeout(PostFB, 50);
             }
             
         }
 
 
         function Display_change(num,sendback) {
-        
+
+            if(num == 21){
+              reset();
+              return;
+            }
+            if(num == -6){
+              reset();
+              return;
+            }
             if(num < 0){
                 var flopcardstr = "flopcard"+(num*-1);
+                alert(flopcardstr);
                 var flopcard = document.getElementById(flopcardstr);
                 if(flopcard.classList.contains('full') && sendback == 1){
                             var sendback = flopcard.style.backgroundImage;
@@ -657,7 +695,7 @@
                             card.classList = "empty";
                             if(hand.classList == "complete_hand"){
                             hand.classList = "hand";
-                            PFB();
+                            setTimeout(PFB, 50);
                             }
                 }
 
@@ -687,7 +725,7 @@
                             card.classList = "empty";
                             if(hand.classList == "complete_hand"){
                             hand.classList = "hand";
-                            PFB();
+                            setTimeout(PFB, 50);
                             }
                             
                 }
