@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html>
+<head>
+   
+    <title>Texas Hold'em poker hands calculator</title>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url("card_background_photo.jpg");
+            background-size: cover;
+            background-attachment: fixed;
+            background-repeat: round;
+        }
+
+        .empty {
+            background-image: url("empty_card.jpg");
+            background-size: cover;
+            width: 43px; 
+            height: 60px;
+            position: absolute;
+            border-width: 2px;
+            border-color: black;
+            border-style: solid;
+        }
+
+        .full {
+
+            background-size: cover;
+            width: 43px; 
+            height: 60px;
+            position: absolute;
+            border-width: 0px;
+            border-color: black;
+            border-style: solid;
+        }
+
+        .deck_full {
+            background-size: cover;
+            width: 17px; 
+            height: 34px;
+            position: absolute;
+            border-width: 2px;
+            border-color: black;
+            border-style: solid;
+        }
+
+        .deck_empty {
+            
+            background-size: cover;
+            width: 17px; 
+            height: 34px;
+            position: absolute;
+            border-width: 2px;
+            border-color: black;
+            border-style: solid;
+        }
+
+
+
+        .hand {
+            position: absolute;
+            width: 116px; 
+            height: 110px;
+        }
+
+        .complete_hand {
+            position: absolute;
+            width: 116px; 
+            height: 110px;
+        }
+
+        .pokertable {
+            background: url("poker_photo.jpg");
+            background-repeat: round;
+            position: absolute;
+            width: 480px;
+            height: 270px
+            
+        }
+
+        .oval {
+            border-radius: 165px;
+        }
+
+        .table_with_hands {
+            
+            max-width: 750px;
+            height: 100vh;
+           
+        }
+
+        .flop {
+            position: absolute;
+            width: 174px;
+            height: 80px;
+        }
+
+        .fullflop {
+            position: absolute;
+            width: 174px;
+            height: 80px;
+        }
+
+        .turn {
+            position: absolute;
+            width: 58px;
+            height: 80px;
+        }
+
+        .river {
+            position: absolute;
+            width: 58px;
+            height: 80px;
+        }
+
+        .cardrow {
+            position: absolute;
+            width: 286px;
+            height: 34px;
+        }
+
+        .wintext {
+            position: absolute;
+            width: 106px;
+            height: 35px;
+            margin-top: 65px;
+            background-color: black;
+            opacity: 0.5;
+            font-size: 14px;
+            color: white;
+            text-align: center;
+            white-space: pre;
+
+        }
+
+        .notext {
+            margin-top: 65px;
+            opacity: 0;
+          
+        }
+
+        
+    </style>
+    
+    
+</head>
+
+
+<body onload="setsize(750)" onresize="resize()">
+
+    <script>
+        function setsize(innerW) {
+            //innerW specifies size of table_with_hands div
+            var windowinnerW = window.innerWidth;
+            
+            var table_with_hands = document.getElementById("table_with_hands");
+            var leftmar = (windowinnerW - innerW)/2;
+            var leftmarstr = leftmar+"px";
+            table_with_hands.style.marginLeft = leftmarstr;
+
+            
+            var table = document.getElementById("table");
+            leftmar = (innerW - 480)/2;  //480 is width of table
+            leftmarstr = leftmar+"px";
+            table.style.marginLeft = leftmarstr;
+
+            var hand = document.getElementById("hand1");
+            var hand1 = document.getElementById("hand6");
+            leftmar = (innerW - 116)*0.04;
+            leftmarstr = leftmar+"px";
+            hand.style.marginLeft = leftmarstr;
+            hand1.style.marginLeft = leftmarstr;
+
+
+            hand = document.getElementById("hand5");
+            hand1 = document.getElementById("hand10");
+            leftmar = (innerW - 116) - (innerW - 116)*0.04;
+            leftmarstr = leftmar+"px";
+            hand.style.marginLeft = leftmarstr;
+            hand1.style.marginLeft = leftmarstr;
+
+
+            hand = document.getElementById("hand2");
+            hand1 = document.getElementById("hand7");
+            leftmar = (innerW-116)*0.25;
+            leftmarstr = leftmar+"px";
+            hand.style.marginLeft = leftmarstr;
+            hand1.style.marginLeft = leftmarstr;
+
+            hand = document.getElementById("hand4");
+            hand1 = document.getElementById("hand9");
+            leftmar = (innerW-116) - (innerW-116)*0.25;
+            leftmarstr = leftmar+"px";
+            hand.style.marginLeft = leftmarstr;
+            hand1.style.marginLeft = leftmarstr;
+
+            hand = document.getElementById("hand3");
+            hand1 = document.getElementById("hand8");
+            leftmar = (innerW - 116)*0.5;
+            leftmarstr = leftmar+"px";
+            hand.style.marginLeft = leftmarstr;
+            hand1.style.marginLeft = leftmarstr;
+
+            var flop = document.getElementById("flop");
+            leftmar = (innerW - 174)*0.40
+            leftmarstr = leftmar+"px";
+            flop.style.marginLeft = leftmarstr;
+
+            var turn = document.getElementById("turn");
+            leftmar = (innerW - 58)*0.585
+            leftmarstr = leftmar+"px";
+            turn.style.marginLeft = leftmarstr;
+
+            var river = document.getElementById("river");
+            leftmar = (innerW - 58)*0.67
+            leftmarstr = leftmar+"px";
+            river.style.marginLeft = leftmarstr;
+
+            var spades = document.getElementById("spades");
+            leftmar = (innerW - 286)*0.5
+            leftmarstr = leftmar+"px";
+            spades.style.marginLeft = leftmarstr;
+
+            var spades = document.getElementById("clubs");
+            spades.style.marginLeft = leftmarstr;
+
+            var diamonds = document.getElementById("diamonds");
+            diamonds.style.marginLeft = leftmarstr;
+
+            var hearts = document.getElementById("hearts");
+            hearts.style.marginLeft = leftmarstr;
+            
+            
+        }
+
+
+        function resize() {
+            
+            var windowinnerW = window.innerWidth;
+            if(windowinnerW < 750){
+                setsize(windowinnerW);
+            }else{
+                setsize(750);
+            }    
+            
+        }
+    </script>  
+        
+    
+    
+
+    
+    
+    
+
+        <script>
+            function reset() {
+                var card = document.getElementById("card1");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card2");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card3");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card4");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card5");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card6");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card7");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card8");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card9");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card10");
+                card.style.border ="2px solid black";
+
+                card = document.getElementById("card11");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card12");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card13");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card14");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card15");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card16");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card17");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card18");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card19");
+                card.style.border ="2px solid black";
+                
+
+                card = document.getElementById("card20");
+                card.style.border ="2px solid black";
+
+                card = document.getElementById("flopcard1");
+                card.style.border ="2px solid black";
+
+                card = document.getElementById("flopcard2");
+                card.style.border ="2px solid black";
+
+                card = document.getElementById("flopcard3");
+                card.style.border ="2px solid black";
+
+
+
+                
+
+            }
+        </script>
+    
+
+    <div id="table_with_hands" class="table_with_hands">
+
+            <button onclick="location.reload(true)" style="margin-left: 0vh;">Reset</button>
+                
+
+        <div id="table" class="pokertable oval" style="margin-top: 105px;"></div>
+            
+        
+        <div id="flop" class="flop" style="margin-top: 200px;">
+            <div id="flopcard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick="Display_change(-1,1)"></div>
+            <div id="flopcard2" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick="Display_change(-2,1)"></div>
+            <div id="flopcard3" class = "empty" style = "margin-left: 117px; margin-top: 1px;" onclick="Display_change(-3,1)"></div>
+
+
+        </div>
+
+        <div id="turn" class="turn" style="margin-top: 200px;">
+            <div id="turncard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;"></div>
+        </div>
+
+        <div id="river" class="river" style="margin-top: 200px;">
+            <div id="rivercard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;"></div>
+        </div>
+
+
+        <div id="hand1" class = "hand" style="margin-top: 70px;">
+            <div id="card1" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(1,1)"></div>
+            <div id="card2" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(2,1)"></div>
+            <div id="hand1win" class="notext" style="margin-top: 65px;">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand2" class = "hand" style="margin-top: 20px;">
+            <div id="card3" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(3,1)"></div>
+            <div id="card4" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(4,1)"></div>
+            <div id="hand2win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand3" class = "hand" style="margin-top: 20px;">
+            <div id="card5" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(5,1)"></div>
+            <div id="card6" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(6,1)"></div>
+            <div id="hand3win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand4" class = "hand" style="margin-top: 20px;">
+            <div id="card7" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(7,1)"></div>
+            <div id="card8" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(8,1)"></div>
+            <div id="hand4win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand5" class = "hand" style="margin-top: 70px;">
+            <div id="card9" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(9,1)"></div>
+            <div id="card10" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(10,1)"></div>
+            <div id="hand5win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand6" class = "hand" style="margin-top: 340px;">
+            <div id="card11" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(11,1)"></div>
+            <div id="card12" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(12,1)"></div>
+            <div id="hand6win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand7" class = "hand" style="margin-top: 390px;">
+            <div id="card13" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(13,1)"></div>
+            <div id="card14" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(14,1)"></div>
+            <div id="hand7win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand8" class = "hand" style="margin-top: 390px;">
+            <div id="card15" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(15,1)"></div>
+            <div id="card16" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(16,1)"></div>
+            <div id="hand8win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand9" class = "hand" style="margin-top: 390px;">
+            <div id="card17" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(17,1)"></div>
+            <div id="card18" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(18,1)"></div>
+            <div id="hand9win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+        <div id ="hand10" class = "hand" style="margin-top: 340px;">
+            <div id="card19" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick ="Display_change(19,1)"></div>
+            <div id="card20" class = "empty" style = "margin-left: 59px; margin-top: 1px;" onclick ="Display_change(20,1)"></div>
+            <div id="hand10win" class="notext">Win: 50%<br>Tie: 50%</div>
+        </div>
+
+
+        <div id="spades" class="cardrow" style="margin-top: 500px;">
+            <div id="14S" class = "deck_full" style = "margin-left: 1px; background-image: url(cards/14S.jpg);" onclick="give_card('cards/14S.jpg')"></div>
+            <div id="13S" class = "deck_full" style = "margin-left: 23px; background-image: url(cards/13S.jpg);" onclick="give_card('cards/13S.jpg')"></div>
+            <div id="12S" class = "deck_full" style = "margin-left: 45px; background-image: url(cards/12S.jpg);" onclick="give_card('cards/12S.jpg')"></div>
+            <div id="11S" class = "deck_full" style = "margin-left: 67px; background-image: url(cards/11S.jpg);" onclick="give_card('cards/11S.jpg')"></div>
+            <div id="10S" class = "deck_full" style = "margin-left: 89px; background-image: url(cards/10S.jpg);" onclick="give_card('cards/10S.jpg')"></div>
+            <div id="9S" class = "deck_full" style = "margin-left: 111px; background-image: url(cards/9S.jpg);" onclick="give_card('cards/9S.jpg')"></div>
+            <div id="8S" class = "deck_full" style = "margin-left: 133px; background-image: url(cards/8S.jpg);" onclick="give_card('cards/8S.jpg')"></div>
+            <div id="7S" class = "deck_full" style = "margin-left: 155px; background-image: url(cards/7S.jpg);" onclick="give_card('cards/7S.jpg')"></div>
+            <div id="6S" class = "deck_full" style = "margin-left: 177px; background-image: url(cards/6S.jpg);" onclick="give_card('cards/6S.jpg')"></div>
+            <div id="5S" class = "deck_full" style = "margin-left: 199px; background-image: url(cards/5S.jpg);" onclick="give_card('cards/5S.jpg')"></div>
+            <div id="4S" class = "deck_full" style = "margin-left: 221px; background-image: url(cards/4S.jpg);" onclick="give_card('cards/4S.jpg')"></div>
+            <div id="3S" class = "deck_full" style = "margin-left: 243px; background-image: url(cards/3S.jpg);" onclick="give_card('cards/3S.jpg')"></div>
+            <div id="2S" class = "deck_full" style = "margin-left: 265px; background-image: url(cards/2S.jpg);" onclick="give_card('cards/2S.jpg')"></div>
+        </div>
+
+        <div id="clubs" class="cardrow" style="margin-top: 540px;">
+            <div id="14C" class = "deck_full" style = "margin-left: 1px; background-image: url(cards/14C.jpg);" onclick="give_card('cards/14C.jpg')"></div>
+            <div id="13C" class = "deck_full" style = "margin-left: 23px; background-image: url(cards/13C.jpg);" onclick="give_card('cards/13C.jpg')"></div>
+            <div id="12C" class = "deck_full" style = "margin-left: 45px; background-image: url(cards/12C.jpg);" onclick="give_card('cards/12C.jpg')"></div>
+            <div id="11C" class = "deck_full" style = "margin-left: 67px; background-image: url(cards/11C.jpg);" onclick="give_card('cards/11C.jpg')"></div>
+            <div id="10C" class = "deck_full" style = "margin-left: 89px; background-image: url(cards/10C.jpg);" onclick="give_card('cards/10C.jpg')"></div>
+            <div id="9C" class = "deck_full" style = "margin-left: 111px; background-image: url(cards/9C.jpg);" onclick="give_card('cards/9C.jpg')"></div>
+            <div id="8C" class = "deck_full" style = "margin-left: 133px; background-image: url(cards/8C.jpg);" onclick="give_card('cards/8C.jpg')"></div>
+            <div id="7C" class = "deck_full" style = "margin-left: 155px; background-image: url(cards/7C.jpg);" onclick="give_card('cards/7C.jpg')"></div>
+            <div id="6C" class = "deck_full" style = "margin-left: 177px; background-image: url(cards/6C.jpg);" onclick="give_card('cards/6C.jpg')"></div>
+            <div id="5C" class = "deck_full" style = "margin-left: 199px; background-image: url(cards/5C.jpg);" onclick="give_card('cards/5C.jpg')"></div>
+            <div id="4C" class = "deck_full" style = "margin-left: 221px; background-image: url(cards/4C.jpg);" onclick="give_card('cards/4C.jpg')"></div>
+            <div id="3C" class = "deck_full" style = "margin-left: 243px; background-image: url(cards/3C.jpg);" onclick="give_card('cards/3C.jpg')"></div>
+            <div id="2C" class = "deck_full" style = "margin-left: 265px; background-image: url(cards/2C.jpg);" onclick="give_card('cards/2C.jpg')"></div>
+        </div>
+
+        <div id="diamonds" class="cardrow" style="margin-top: 580px;">
+            <div id="14D" class = "deck_full" style = "margin-left: 1px; background-image: url(cards/14D.jpg);" onclick="give_card('cards/14D.jpg')"></div>
+            <div id="13D" class = "deck_full" style = "margin-left: 23px; background-image: url(cards/13D.jpg);" onclick="give_card('cards/13D.jpg')"></div>
+            <div id="12D" class = "deck_full" style = "margin-left: 45px; background-image: url(cards/12D.jpg);" onclick="give_card('cards/12D.jpg')"></div>
+            <div id="11D" class = "deck_full" style = "margin-left: 67px; background-image: url(cards/11D.jpg);" onclick="give_card('cards/11D.jpg')"></div>
+            <div id="10D" class = "deck_full" style = "margin-left: 89px; background-image: url(cards/10D.jpg);" onclick="give_card('cards/10D.jpg')"></div>
+            <div id="9D" class = "deck_full" style = "margin-left: 111px; background-image: url(cards/9D.jpg);" onclick="give_card('cards/9D.jpg')"></div>
+            <div id="8D" class = "deck_full" style = "margin-left: 133px; background-image: url(cards/8D.jpg);" onclick="give_card('cards/8D.jpg')"></div>
+            <div id="7D" class = "deck_full" style = "margin-left: 155px; background-image: url(cards/7D.jpg);" onclick="give_card('cards/7D.jpg')"></div>
+            <div id="6D" class = "deck_full" style = "margin-left: 177px; background-image: url(cards/6D.jpg);" onclick="give_card('cards/6D.jpg')"></div>
+            <div id="5D" class = "deck_full" style = "margin-left: 199px; background-image: url(cards/5D.jpg);" onclick="give_card('cards/5D.jpg')"></div>
+            <div id="4D" class = "deck_full" style = "margin-left: 221px; background-image: url(cards/4D.jpg);" onclick="give_card('cards/4D.jpg')"></div>
+            <div id="3D" class = "deck_full" style = "margin-left: 243px; background-image: url(cards/3D.jpg);" onclick="give_card('cards/3D.jpg')"></div>
+            <div id="2D" class = "deck_full" style = "margin-left: 265px; background-image: url(cards/2D.jpg);" onclick="give_card('cards/2D.jpg')"></div>
+        </div>
+
+        <div id="hearts" class="cardrow" style="margin-top: 620px;">
+            <div id="14H" class = "deck_full" style = "margin-left: 1px; background-image: url(cards/14H.jpg);" onclick="give_card('cards/14H.jpg')"></div>
+            <div id="13H" class = "deck_full" style = "margin-left: 23px; background-image: url(cards/13H.jpg);" onclick="give_card('cards/13H.jpg')"></div>
+            <div id="12H" class = "deck_full" style = "margin-left: 45px; background-image: url(cards/12H.jpg);" onclick="give_card('cards/12H.jpg')"></div>
+            <div id="11H" class = "deck_full" style = "margin-left: 67px; background-image: url(cards/11H.jpg);" onclick="give_card('cards/11H.jpg')"></div>
+            <div id="10H" class = "deck_full" style = "margin-left: 89px; background-image: url(cards/10H.jpg);" onclick="give_card('cards/10H.jpg')"></div>
+            <div id="9H" class = "deck_full" style = "margin-left: 111px; background-image: url(cards/9H.jpg);" onclick="give_card('cards/9H.jpg')"></div>
+            <div id="8H" class = "deck_full" style = "margin-left: 133px; background-image: url(cards/8H.jpg);" onclick="give_card('cards/8H.jpg')" ></div>
+            <div id="7H" class = "deck_full" style = "margin-left: 155px; background-image: url(cards/7H.jpg);" onclick="give_card('cards/7H.jpg')"></div>
+            <div id="6H" class = "deck_full" style = "margin-left: 177px; background-image: url(cards/6H.jpg);" onclick="give_card('cards/6H.jpg')"></div>
+            <div id="5H" class = "deck_full" style = "margin-left: 199px; background-image: url(cards/5H.jpg);" onclick="give_card('cards/5H.jpg')"></div>
+            <div id="4H" class = "deck_full" style = "margin-left: 221px; background-image: url(cards/4H.jpg);" onclick="give_card('cards/4H.jpg')"></div>
+            <div id="3H" class = "deck_full" style = "margin-left: 243px; background-image: url(cards/3H.jpg);" onclick="give_card('cards/3H.jpg')"></div>
+            <div id="2H" class = "deck_full" style = "margin-left: 265px; background-image: url(cards/2H.jpg);" onclick="give_card('cards/2H.jpg')"></div>
+        </div>
+    </div>
+
+
+    <script>
+
+
+        function give_card(img){
+
+            var str = 'card1';
+            var spliced = img.slice(6, -4);
+            var callPFB = 0;
+            if(document.getElementById(spliced).classList == 'deck_full'){
+                for(var i =1; i < 21; i++){
+                    str = str.slice(0,4)+i;
+                    var card = document.getElementById(str);
+                    var cardcomp = window.getComputedStyle(card);
+                    
+                    if(cardcomp.getPropertyValue('border-color') === 'rgb(255, 255, 0)'){
+                        if(card.classList.contains('full')){
+                            var sendback = card.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                        }
+                       
+                       
+                        card.style.backgroundImage = "url('largecards/" + spliced + ".png')";
+                        card.classList = "full";
+
+                    
+    
+                            if(i%2 == 0){
+                                var str1 = "hand"+i/2;
+                                
+                                curhand = document.getElementById(str1);
+                                var list = curhand.querySelectorAll('div');
+                                if(list[0].classList == "full" && list[1].classList == "full"){
+                                    curhand.classList = "complete_hand";
+                                    callPFB = 1;
+                                    
+                                }
+                            }else{
+                                var str1 = "hand"+(0.5+ i/2);
+                                curhand = document.getElementById(str1);
+                                var list = curhand.querySelectorAll('div');
+                                if(list[0].classList == "full" && list[1].classList == "full"){
+                                    curhand.classList = "complete_hand";
+                                    callPFB = 1;
+                                    
+                                }
+                            }
+                        Display_change(i+1,0);
+
+                        var deckcard = document.getElementById(spliced);
+                        deckcard.classList = "deck_empty";
+                        deckcard.style.backgroundImage = "none";
+
+                       
+                        
+                        break;
+                    }
+                   
+                    
+                    
+                }
+
+
+
+                if(callPFB != 1){}
+                
+            }
+            if(callPFB == 1){
+                setTimeout(PFB,40);
+            }
+            
+        }
+
+
+        function Display_change(num,sendback) {
+        
+            if(num < 0){
+                var flopcardstr = "flopcard"+(num*-1);
+                var flopcard = document.getElementById(flopcardstr);
+                if(flopcard.classList.contains('full') && sendback == 1){
+                            var sendback = flopcard.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                            flopcard.style.backgroundImage = "url('empty_card.jpg')";
+                            flopcard.classList = "empty";
+                            
+                }
+
+
+
+                var card1 = document.getElementById(flopcardstr);
+                var card1comp = window.getComputedStyle(card1);
+                if(card1comp.getPropertyValue('border-color') === 'rgb(0, 0, 0)'){
+                    reset();
+                    card1.style.border ="2px solid yellow";
+                    
+                }else{
+                    reset();
+                }
+                return;
+                
+            }
+        
+            if(num%2==1){
+            var handstr = "hand"+(0.5 + num/2);
+            var cardstr = "card"+num;
+            var card = document.getElementById(cardstr);
+            var hand = document.getElementById(handstr);
+                if(card.classList.contains('full') && sendback == 1){
+                            var sendback = card.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                            card.style.backgroundImage = "url('empty_card.jpg')";
+                            card.classList = "empty";
+                            if(hand.classList == "complete_hand"){
+                            hand.classList = "hand";
+                            setTimeout(PFB,40);
+                            }
+                }
+
+
+
+                var card1 = document.getElementById(cardstr);
+                var card1comp = window.getComputedStyle(card1);
+                if(card1comp.getPropertyValue('border-color') === 'rgb(0, 0, 0)'){
+                    reset();
+                    card1.style.border ="2px solid yellow";
+                    
+                }else{
+                    reset();
+                }
+            }else{
+                var handstr = "hand"+(num/2);
+                var cardstr = "card"+num;
+                var card = document.getElementById(cardstr);
+                var hand = document.getElementById(handstr);
+                if(card.classList.contains('full') && sendback == 1){
+                            var sendback = card.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                            card.style.backgroundImage = "url('empty_card.jpg')";
+                            card.classList = "empty";
+                            if(hand.classList == "complete_hand"){
+                            hand.classList = "hand";
+                            setTimeout(PFB,40);
+                            }
+                            
+                }
+
+
+
+                var card1 = document.getElementById(cardstr);
+                var card1comp = window.getComputedStyle(card1);
+                if(card1comp.getPropertyValue('border-color') === 'rgb(0, 0, 0)'){
+                    reset();
+                    card1.style.border ="2px solid yellow";
+                    
+                }else{
+                    reset();
+                }
+            }
+
+        
+            
+        }
+    </script>
+    
+    
+    <script>
+
+        function PFB() {
+
+                                
+                                function suit_str_to_int(str) {
+                                    if (str == 'S') {
+                                        return 1;
+                                    } else if (str == 'C') {
+                                        return 2;
+                                    } else if (str == 'D') {
+                                        return 3;
+                                    } else if (str == 'H') {
+                                        return 4;
+                                    } else {
+                                        return -1;
+                                    }
+                                }
+            
+                                        class card {
+                                constructor(value, suit) {
+                                    this.value = value;
+                                    this.suit = suit;
+                                }
+
+                                printcard() {
+                                    
+                                
+                                    let suit;
+                                    if (this.suit === 1) {
+                                        suit = 'S';
+                                    } else if (this.suit === 2) {
+                                        suit = 'C';
+                                    } else if (this.suit === 3) {
+                                        suit = 'D';
+                                    } else if (this.suit === 4) {
+                                        suit = 'H';
+                                    } else {
+                                        suit = '?';
+                                    }
+                                return this.value + suit;
+                                }
+
+                        
+                            }
+
+                            let starting_hands = [];
+                            let starting_hand_nums = [];
+                            let starting_hand_nums_idx = 0;
+                            var NUMBER_of_PLAYERS = 0;
+                            var str = "hand";
+                            for(var i = 1; i < 11; i++){
+                                
+                                str = str+i;
+                                var curhand = document.getElementById(str);
+                                if(curhand.classList == "complete_hand"){
+                                    NUMBER_of_PLAYERS++;
+                                    let comphand = [];
+                                    var list = curhand.querySelectorAll('div');
+
+                                    var val1 = 0;
+                                    var suit1 = list[0].style.backgroundImage.slice(16,19);
+                                   
+                                    if( !(/^[CSHD]+$/.test(suit1[1])) ){
+                                        val1 = parseInt(suit1.slice(0,2));
+                                        suit1 = suit1.slice(2,3);
+                                    }else{
+                                        val1 = parseInt(suit1.slice(0,1));
+                                        suit1 = suit1.slice(1,2);
+                                    }
+
+                                    var val2 = 0;
+                                    var suit2 = list[1].style.backgroundImage.slice(16,19);
+                                    if(!(/^[CSHD]+$/.test(suit2[1]))  ){
+                                        val2 = parseInt(suit2.slice(0,2));
+                                        suit2 = suit2.slice(2,3);
+                                    }else{
+                                        val2 = parseInt(suit2.slice(0,1));
+                                        suit2 = suit2.slice(1,2);
+                                    }
+                                    suit1 = suit_str_to_int(suit1);
+                                    suit2 = suit_str_to_int(suit2);
+                                    comphand.push(new card(val1,suit1));
+                                    comphand.push(new card(val2,suit2));
+                                    
+                                    starting_hands.push(comphand);
+                                    starting_hand_nums[starting_hand_nums_idx] = i;  
+                                    starting_hand_nums_idx++;
+                                    
+                                }
+
+                                str = str.slice(0,4);
+                                
+                            }
+
+                            
+
+                            if(NUMBER_of_PLAYERS <= 1){
+                                return;
+                            }
+                            
+                            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
+
+                             
+                                document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
+                                document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Loading...";
+                                
+
+                            }
+                            
+        setTimeout(function(){
+                            const deck = [];
+                                i = 0;
+                                let val = 2;
+                                let suit = 1;
+                                while (suit < 5) {
+                                    val = 2;
+                                    while (val < 15) {
+                                        let should_add = 1;
+                                        let jj = 0;
+                                        let card_num = 0;
+                                        while (jj < NUMBER_of_PLAYERS) {
+                                            if (val === starting_hands[jj][card_num].value && suit === starting_hands[jj][card_num].suit) {
+                                                should_add = 0;
+                                                break;
+                                            }
+                                            card_num++;
+                                            if (card_num > 1) {
+                                                card_num = 0;
+                                                jj++;
+                                            }
+                                        }
+                                        if (should_add) {
+                                            let cur_c = new card(val,suit);
+                                            deck[i] = cur_c;
+                                            i++;
+                                        }
+                                        val++;
+                                    }
+                                    suit++;
+                                }
+
+                            
+
+                                
+                            //Below builds every possible board and calls the find_winner function for each one.
+                            const dubs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            const board = [];
+                            let i0 = 0;
+                            let i1 = 1;
+                            let i2 = 2;
+                            let i3 = 3;
+                            let i4 = 4;
+                            let winner = 0;
+                            while (true) {  //this loop gets broken by the combination algorithm below when it has reached the final index
+                                board[0] = deck[i0];
+                                board[1] = deck[i1];
+                                board[2] = deck[i2];
+                                board[3] = deck[i3];
+                                board[4] = deck[i4];
+                            
+                                
+
+                                
+                            
+                            let handata = new Array(7);
+                            let windata = new Array(7).fill(0);
+                          
+                            let j = 0;
+                            while (j < NUMBER_of_PLAYERS) {
+                                handata[0] = 0;
+                                handata[1] = 0;
+                                handata[2] = 0;
+                                handata[3] = 0;
+                                handata[4] = 0;
+                                handata[5] = 0;
+                                handata[6] = j + 1;
+                                let SCH_unsorted = new Array(7);
+                                SCH_unsorted[0] = board[0];
+                                SCH_unsorted[1] = board[1];
+                                SCH_unsorted[2] = board[2];
+                                SCH_unsorted[3] = board[3];
+                                SCH_unsorted[4] = board[4];
+                                SCH_unsorted[5] = starting_hands[j][0];
+                                SCH_unsorted[6] = starting_hands[j][1];
+                                let SCH = new Array(7);
+                                
+                                let cur_highest = 0;
+                                let prev_highest = 15;
+                                let l = 0;
+                                let isflush = 0;
+                                let isstraight = 0;
+                                let istwopair = 0;
+                                let ispair = 0;
+                                let istrips = 0;
+                            
+                                while (l < 7) {
+                                    for (let i = 0; i < 7; i++) {
+                                        if (SCH_unsorted[i].value > cur_highest && SCH_unsorted[i].value < prev_highest) {
+                                            cur_highest = SCH_unsorted[i].value;
+                                            
+                                        }
+                                    }
+                                    for (let i = 0; i < 7; i++) {
+                                        if (SCH_unsorted[i].value === cur_highest) {
+                                        
+                                            SCH[l] =  SCH_unsorted[i];
+                                            l++;
+                                        }
+                                    }
+                                    prev_highest = cur_highest;
+                                    cur_highest = 0;
+                                }
+                                
+                                let flush_array = new Array(7);
+                                for (let i = 0; i < 7; i++) {
+                                    flush_array[i] = { value: 0, suit: 0 };
+                                }
+                                let cur_suit = 1;
+                                let suit_count = 0;
+                                while (cur_suit < 5) {
+                                    for (let i = 0; i < 7; i++) {
+                                        if (SCH[i].suit === cur_suit) {
+                                            flush_array[suit_count] = SCH[i];
+                                            suit_count++;
+                                        }
+                                    }
+                                    if (suit_count > 4) {
+                                        isflush = 1;
+                                        break;
+                                    } else if (suit_count > 2) {
+                                        break;
+                                    }
+                                    suit_count = 0;
+                                    cur_suit++;
+                                }
+                                
+                                if (isflush) {
+                                    let is_odd_case = 0;
+                                    let curval = flush_array[0].value;
+                                    let straightcount = 0;
+                                    let i = 0;
+                                    while (straightcount < 5 && !(is_odd_case && straightcount === 4) && i < 7 && flush_array[i].suit === cur_suit) {
+                                        if (curval === flush_array[i].value) {
+                                            if (curval === 5 && flush_array[0].value === 14 && straightcount === 0) {
+                                                is_odd_case = 1;
+                                            }
+                                            straightcount++;
+                                            handata[straightcount] = curval;
+                                            curval--;
+                                        } else {
+                                            straightcount = 0;
+                                            curval = flush_array[i].value;
+                                            is_odd_case = 0;
+                                            i--;
+                                        }
+                                        i++;
+                                    }
+                                    if (straightcount === 5 || (is_odd_case && straightcount === 4)) {
+                                        
+                                        handata[0] = 9;
+                                        if (is_odd_case && straightcount === 4) {
+                                            handata[1] = 5;
+                                            handata[2] = 4;
+                                            handata[3] = 3;
+                                            handata[4] = 2;
+                                            handata[5] = 1;
+                                        }
+                                    }
+                                }
+                                if (handata[0] < 9) {
+                                    let quadscount = 0;
+                                    let value = 0;
+                                    for (let i = 0; i < 7; i++) {
+                                        value = SCH[i].value;
+                                        for (let ii = 0; ii < 7; ii++) {
+                                            if (SCH[ii].value === value) {
+                                                quadscount++;
+                                            }
+                                        }
+                                        if (quadscount === 4) {
+                                        
+                                            handata[0] = 8;
+                                            handata[1] = value;
+                                            let highest = 0;
+                                            let i = 0;
+                                            while (i < 7) {
+                                                if (highest < SCH[i].value && SCH[i].value !== value) {
+                                                    highest = SCH[i].value;
+                                                }
+                                                i++;
+                                            }
+                                            handata[2] = highest;
+                                            handata[3] = 0;
+                                            handata[4] = 0;
+                                            handata[5] = 0;
+                                            break;
+                                        }
+                                        quadscount = 0;
+                                    }
+                                }
+                                let tripsvalue = 0;
+                                if (handata[0] < 8) {
+                                    let tripscount = 0;
+                                
+                                    for (let ii = 0; ii < 5; ii++) {
+                                        tripsvalue = SCH[ii].value;
+                                        for (let i = 0; i < 7; i++) {
+                                            if (SCH[i].value === tripsvalue) {
+                                                tripscount++;
+                                            }
+                                        }
+                                        if (tripscount === 3) {
+                                            istrips = 1;
+                                            for (let k = 0; k < 7; k++) {
+                                                let paircount = 0;
+                                                pairval = SCH[k].value;
+                                                if (pairval === tripsvalue) {
+                                                    k += 3;
+                                                    if (k > 6) {
+                                                        break;
+                                                    }
+                                                    pairval = SCH[k].value;
+                                                }
+                                                for (let kk = 0; kk < 7; kk++) {
+                                                    if (pairval === SCH[kk].value) {
+                                                        paircount++;
+                                                    }
+                                                }
+                                                if (paircount > 1) {
+                                                    isboat = 1;
+                                                    handata[0] = 7;
+                                                    handata[1] = tripsvalue;
+                                                    handata[2] = pairval;
+                                                    handata[3] = 0;
+                                                    handata[4] = 0;
+                                                    handata[5] = 0;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (istrips) {
+                                            break;
+                                        }
+                                        tripscount = 0;
+                                    }
+                                }
+                                
+
+
+                                // assigns flush
+                                if (handata[0] < 6 && isflush) {
+                                    handata[0] = 6;
+                                    handata[1] = flush_array[0].value;
+                                    handata[2] = flush_array[1].value;
+                                    handata[3] = flush_array[2].value;
+                                    handata[4] = flush_array[3].value;
+                                    handata[5] = flush_array[4].value;
+                                }
+                                // assigns straight
+                                if (handata[0] < 5) {
+                                    let is_odd_case = 0;
+                                    let curval = SCH[0].value;
+                                    let straightcount = 0;
+                                    let i = 0;
+                                    while (i < 7 && straightcount < 5 && !(is_odd_case && straightcount == 4)) {
+                                        if (curval == SCH[i].value) {
+                                            if (curval == 5 && SCH[0].value == 14 && straightcount == 0) {
+                                                is_odd_case = 1;
+                                            }
+                                            straightcount++;
+                                            handata[straightcount] = curval;
+                                            i++;
+                                            while (i < 7 && SCH[i].value == curval) {
+                                                i++;
+                                                
+                                            }
+                                            curval--;
+                                        } else {
+                                            straightcount = 0;
+                                            curval = SCH[i].value;
+                                            is_odd_case = 0;
+                                        }
+                                    }
+                                    if (straightcount == 5 || (is_odd_case && straightcount == 4)) {
+                                    
+                                        handata[0] = 5;
+                                        if (is_odd_case) {
+                                            handata[1] = 5;
+                                            handata[2] = 4;
+                                            handata[3] = 3;
+                                            handata[4] = 2;
+                                            handata[5] = 1;
+                                        }
+                                    }
+                                }
+                                // assigns trips
+                                if (istrips && handata[0] < 4) {
+                                    handata[0] = 4;
+                                    handata[1] = tripsvalue;
+                                    let k = 0;
+                                    if (SCH[k].value == tripsvalue) {
+                                        k += 3;
+                                    }
+                                    let kicker = SCH[k].value;
+                                    k++;
+                                    if (SCH[k].value == tripsvalue) {
+                                        k += 3;
+                                    }
+                                    let kicker2 = SCH[k].value;
+                                    handata[2] = kicker;
+                                    handata[3] = kicker2;
+                                    handata[4] = 0;
+                                    handata[5] = 0;
+                                }
+                                // check and assign for two pair and then if not check and assign for pair
+                                if (handata[0] < 3) {
+                                    let first_pairval = 0;
+                                    let second_pairval = 0;
+                                    let first_pair_count = 0;
+                                    let second_pair_count = 0;
+                                    for (let f = 0; f < 6; f++) {
+                                        first_pairval = SCH[f].value;
+                                        first_pair_count = 0;
+                                        for (let ff = 0; ff < 7; ff++) {
+                                            if (first_pairval == SCH[ff].value) {
+                                                first_pair_count++;
+                                            }
+                                        }
+                                        if (first_pair_count == 2) {
+                                            ispair = 1;
+                                            let r = 0;
+                                            second_pair_count = 0;
+                                            while (r < 7) {
+                                                if (SCH[r].value == first_pairval) {
+                                                    r++;
+                                                } else {
+                                                    second_pairval = SCH[r].value;
+                                                    for (let ff = 0; ff < 7; ff++) {
+                                                        if (second_pairval == SCH[ff].value) {
+                                                            second_pair_count++;
+                                                        }
+                                                    }
+                                                    if (second_pair_count == 2) {
+                                                        istwopair = 1;
+                                                        break;
+                                                    } else {
+                                                        r++;
+                                                        second_pair_count = 0;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (istwopair) {
+                                        handata[0] = 3;
+                                        handata[1] = first_pairval;
+                                        handata[2] = second_pairval;
+                                        let kicker3 = 0;
+                                        for (let o = 0; o < 7; o++) {
+                                            if (kicker3 < SCH[o].value && SCH[o].value != first_pairval && SCH[o].value != second_pairval) {
+                                                kicker3 = SCH[o].value;
+                                            }
+                                        }
+                                        handata[3] = kicker3;
+                                        handata[4] = 0;
+                                        handata[5] = 0;
+                                    } else if (ispair) {
+                                        handata[0] = 2;
+                                        handata[1] = first_pairval;
+                                        let cur_kicker = SCH[0].value;
+                                        let handata_idx = 2;
+                                        for (let i = 0; handata_idx < 5 && i < 7; i++) {
+                                            cur_kicker = SCH[i].value;
+                                            if (cur_kicker == first_pairval) {
+                                                i += 2;
+                                            }
+                                            cur_kicker = SCH[i].value;
+                                            handata[handata_idx] = cur_kicker;
+                                            handata_idx++;
+                                        }
+                                    }
+                                }
+                                // if nothing else has been assigned then assign the value of high card
+                                if (handata[0] < 1) {
+                                    handata[0] = 1;
+                                    handata[1] = SCH[0].value;
+                                    handata[2] = SCH[1].value;
+                                    handata[3] = SCH[2].value;
+                                    handata[4] = SCH[3].value;
+                                    handata[5] = SCH[4].value;
+                                }
+                                for (let i = 0; i < 6; i++) {
+                                    if (handata[i] > windata[i]) {
+                                        for (let g = 0; g < 7; g++) {
+                                            windata[g] = handata[g];
+                                        }
+                                        break;
+                                    } else if (handata[i] < windata[i]) {
+                                        break;
+                                    } else if (i == 5) {
+                                        windata[6] = 0;
+                                    }
+                                }
+                                j++;
+                            }
+                                winner = windata[6];
+                                
+                                dubs[winner]++;
+                                //
+                                //
+                                //this algorithm increments each index to make
+                                //every possible combination of choose 5 from an array.
+                                //
+                                //
+                                const objects_in_set = 52 - NUMBER_of_PLAYERS * 2;
+                                if (i4 === objects_in_set - 1) {
+                                    i3++;
+                                    if (i3 === objects_in_set - 1) {
+                                        i2++;
+                                        if (i2 === objects_in_set - 2) {
+                                            i1++;
+                                            if (i1 === objects_in_set - 3) {
+                                                i0++;
+                                                if (i0 === objects_in_set - 4) {
+                                                    break;
+                                                } else {
+                                                    i1 = i0 + 1;
+                                                    i2 = i1 + 1;
+                                                    i3 = i2 + 1;
+                                                    i4 = i3 + 1;
+                                                }
+                                            } else {
+                                                i2 = i1 + 1;
+                                                i3 = i2 + 1;
+                                                i4 = i3 + 1;
+                                            }
+                                        } else {
+                                            i3 = i2 + 1;
+                                            i4 = i3 + 1;
+                                        }
+                                    } else {
+                                        i4 = i3 + 1;
+                                    }
+                                } else {
+                                    i4++;
+                                }
+                                
+                            }
+                            let divisor = 0.000000;
+                            for (let i = 0; i <= NUMBER_of_PLAYERS; i++) {
+                                divisor += dubs[i];
+                            }
+                            
+
+            var tie = 100*(dubs[0]/divisor);
+            tie = tie.toFixed(2);
+            for(var g = 1; g < 11; g++){document.getElementById("hand"+g+"win").classList = "notext";}
+            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
+
+                var num = 100*(dubs[t+1]/divisor);
+                num = num.toFixed(2);
+                document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
+                document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Win: " + num.toString()+"%\r\nTie: "+tie+"%";
+                
+            }
+
+        },30);
+
+            
+                
+        }
+
+
+
+
+                        function PostFB() {
+
+                                                            
+                            function suit_str_to_int(str) {
+                                if (str == 'S') {
+                                    return 1;
+                                } else if (str == 'C') {
+                                    return 2;
+                                } else if (str == 'D') {
+                                    return 3;
+                                } else if (str == 'H') {
+                                    return 4;
+                                } else {
+                                    return -1;
+                                }
+                            }
+
+                                    class card {
+                            constructor(value, suit) {
+                                this.value = value;
+                                this.suit = suit;
+                            }
+
+                            printcard() {
+                                
+
+                                let suit;
+                                if (this.suit === 1) {
+                                    suit = 'S';
+                                } else if (this.suit === 2) {
+                                    suit = 'C';
+                                } else if (this.suit === 3) {
+                                    suit = 'D';
+                                } else if (this.suit === 4) {
+                                    suit = 'H';
+                                } else {
+                                    suit = '?';
+                                }
+                            return this.value + suit;
+                            }
+
+
+                            }
+
+                            let starting_hands = [];
+                            let starting_hand_nums = [];
+                            let starting_hand_nums_idx = 0;
+                            var NUMBER_of_PLAYERS = 0;
+                            var str = "hand";
+                            for(var i = 1; i < 11; i++){
+
+                            str = str+i;
+                            var curhand = document.getElementById(str);
+                            if(curhand.classList == "complete_hand"){
+                                NUMBER_of_PLAYERS++;
+                                let comphand = [];
+                                var list = curhand.querySelectorAll('div');
+
+                                var val1 = 0;
+                                var suit1 = list[0].style.backgroundImage.slice(16,19);
+                            
+                                if( !(/^[CSHD]+$/.test(suit1[1])) ){
+                                    val1 = parseInt(suit1.slice(0,2));
+                                    suit1 = suit1.slice(2,3);
+                                }else{
+                                    val1 = parseInt(suit1.slice(0,1));
+                                    suit1 = suit1.slice(1,2);
+                                }
+
+                                var val2 = 0;
+                                var suit2 = list[1].style.backgroundImage.slice(16,19);
+                                if(!(/^[CSHD]+$/.test(suit2[1]))  ){
+                                    val2 = parseInt(suit2.slice(0,2));
+                                    suit2 = suit2.slice(2,3);
+                                }else{
+                                    val2 = parseInt(suit2.slice(0,1));
+                                    suit2 = suit2.slice(1,2);
+                                }
+                                suit1 = suit_str_to_int(suit1);
+                                suit2 = suit_str_to_int(suit2);
+                                comphand.push(new card(val1,suit1));
+                                comphand.push(new card(val2,suit2));
+                                
+                                starting_hands.push(comphand);
+                                starting_hand_nums[starting_hand_nums_idx] = i;  
+                                starting_hand_nums_idx++;
+                                
+                            }
+
+                            str = str.slice(0,4);
+
+                            }
+
+
+
+                            if(NUMBER_of_PLAYERS <= 1){
+                            return;
+                            }
+                            let flop = [];
+                            var floplist = curhand.querySelectorAll('div');
+                            var val1 = 0;
+                                var suit1 = floplist[0].style.backgroundImage.slice(16,19);
+                            
+                                if( !(/^[CSHD]+$/.test(suit1[1])) ){
+                                    val1 = parseInt(suit1.slice(0,2));
+                                    suit1 = suit1.slice(2,3);
+                                }else{
+                                    val1 = parseInt(suit1.slice(0,1));
+                                    suit1 = suit1.slice(1,2);
+                                }
+
+                            
+                            var val2 = 0;
+                            var suit2 = floplist[1].style.backgroundImage.slice(16,19);
+                                if(!(/^[CSHD]+$/.test(suit2[1]))  ){
+                                    val2 = parseInt(suit2.slice(0,2));
+                                    suit2 = suit2.slice(2,3);
+                                }else{
+                                    val2 = parseInt(suit2.slice(0,1));
+                                    suit2 = suit2.slice(1,2);
+                                }
+
+
+                            var val3 = 0;
+                            var suit3 = floplist[2].style.backgroundImage.slice(16,19);
+                                if(!(/^[CSHD]+$/.test(suit3[1]))  ){
+                                    val3 = parseInt(suit3.slice(0,2));
+                                    suit3 = suit3.slice(2,3);
+                                }else{
+                                    val3 = parseInt(suit3.slice(0,1));
+                                    suit3 = suit3.slice(1,2);
+                                }
+                                suit1 = suit_str_to_int(suit1);
+                                suit2 = suit_str_to_int(suit2);
+                                suit3 = suit_str_to_int(suit3);
+                                flop.push(new card(val1,suit1));
+                                flop.push(new card(val2,suit2));
+                                flop.push(new card(val3,suit3));
+                            
+
+                            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
+
+
+                            document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
+                            document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Loading...";
+
+
+                            }
+
+                            setTimeout(function(){
+                            const deck = [];
+                            i = 0;
+                            let val = 2;
+                            let suit = 1;
+                            while (suit < 5) {
+                                val = 2;
+                                while (val < 15) {
+                                    let should_add = 1;
+                                    let jj = 0;
+                                    let card_num = 0;
+                                    while (jj < NUMBER_of_PLAYERS) {
+                                        if (val === starting_hands[jj][card_num].value && suit === starting_hands[jj][card_num].suit) {
+                                            should_add = 0;
+                                            break;
+                                        }
+                                        card_num++;
+                                        if (card_num > 1) {
+                                            card_num = 0;
+                                            jj++;
+                                        }
+                                    }
+                                    jj = 0;
+                                    while(jj < 3){
+                                        if(val === flop[jj].value && suit === flop[jj].suit){
+                                            should_add = 0;
+                                            break;
+                                        }
+                                    }
+                                    if (should_add) {
+                                        let cur_c = new card(val,suit);
+                                        deck[i] = cur_c;
+                                        i++;
+                                    }
+                                    val++;
+                                }
+                                suit++;
+                            }
+
+
+
+
+                            //Below builds every possible board and calls the find_winner function for each one.
+                            const dubs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                            const board = [];
+                            let i0 = 0;
+                            let i1 = 1;
+                            
+                            let winner = 0;
+                            while (true) {  //this loop gets broken by the combination algorithm below when it has reached the final index
+                            board[0] = flop[0];
+                            board[1] = flop[1];
+                            board[2] = flop[2];
+                            board[3] = deck[i0];
+                            board[4] = deck[i1];
+
+
+
+
+
+                            let handata = new Array(7);
+                            let windata = new Array(7).fill(0);
+
+                            let j = 0;
+                            while (j < NUMBER_of_PLAYERS) {
+                            handata[0] = 0;
+                            handata[1] = 0;
+                            handata[2] = 0;
+                            handata[3] = 0;
+                            handata[4] = 0;
+                            handata[5] = 0;
+                            handata[6] = j + 1;
+                            let SCH_unsorted = new Array(7);
+                            SCH_unsorted[0] = board[0];
+                            SCH_unsorted[1] = board[1];
+                            SCH_unsorted[2] = board[2];
+                            SCH_unsorted[3] = board[3];
+                            SCH_unsorted[4] = board[4];
+                            SCH_unsorted[5] = starting_hands[j][0];
+                            SCH_unsorted[6] = starting_hands[j][1];
+                            let SCH = new Array(7);
+
+                            let cur_highest = 0;
+                            let prev_highest = 15;
+                            let l = 0;
+                            let isflush = 0;
+                            let isstraight = 0;
+                            let istwopair = 0;
+                            let ispair = 0;
+                            let istrips = 0;
+
+                            while (l < 7) {
+                                for (let i = 0; i < 7; i++) {
+                                    if (SCH_unsorted[i].value > cur_highest && SCH_unsorted[i].value < prev_highest) {
+                                        cur_highest = SCH_unsorted[i].value;
+                                        
+                                    }
+                                }
+                                for (let i = 0; i < 7; i++) {
+                                    if (SCH_unsorted[i].value === cur_highest) {
+                                    
+                                        SCH[l] =  SCH_unsorted[i];
+                                        l++;
+                                    }
+                                }
+                                prev_highest = cur_highest;
+                                cur_highest = 0;
+                            }
+
+                            let flush_array = new Array(7);
+                            for (let i = 0; i < 7; i++) {
+                                flush_array[i] = { value: 0, suit: 0 };
+                            }
+                            let cur_suit = 1;
+                            let suit_count = 0;
+                            while (cur_suit < 5) {
+                                for (let i = 0; i < 7; i++) {
+                                    if (SCH[i].suit === cur_suit) {
+                                        flush_array[suit_count] = SCH[i];
+                                        suit_count++;
+                                    }
+                                }
+                                if (suit_count > 4) {
+                                    isflush = 1;
+                                    break;
+                                } else if (suit_count > 2) {
+                                    break;
+                                }
+                                suit_count = 0;
+                                cur_suit++;
+                            }
+
+                            if (isflush) {
+                                let is_odd_case = 0;
+                                let curval = flush_array[0].value;
+                                let straightcount = 0;
+                                let i = 0;
+                                while (straightcount < 5 && !(is_odd_case && straightcount === 4) && i < 7 && flush_array[i].suit === cur_suit) {
+                                    if (curval === flush_array[i].value) {
+                                        if (curval === 5 && flush_array[0].value === 14 && straightcount === 0) {
+                                            is_odd_case = 1;
+                                        }
+                                        straightcount++;
+                                        handata[straightcount] = curval;
+                                        curval--;
+                                    } else {
+                                        straightcount = 0;
+                                        curval = flush_array[i].value;
+                                        is_odd_case = 0;
+                                        i--;
+                                    }
+                                    i++;
+                                }
+                                if (straightcount === 5 || (is_odd_case && straightcount === 4)) {
+                                    
+                                    handata[0] = 9;
+                                    if (is_odd_case && straightcount === 4) {
+                                        handata[1] = 5;
+                                        handata[2] = 4;
+                                        handata[3] = 3;
+                                        handata[4] = 2;
+                                        handata[5] = 1;
+                                    }
+                                }
+                            }
+                            if (handata[0] < 9) {
+                                let quadscount = 0;
+                                let value = 0;
+                                for (let i = 0; i < 7; i++) {
+                                    value = SCH[i].value;
+                                    for (let ii = 0; ii < 7; ii++) {
+                                        if (SCH[ii].value === value) {
+                                            quadscount++;
+                                        }
+                                    }
+                                    if (quadscount === 4) {
+                                    
+                                        handata[0] = 8;
+                                        handata[1] = value;
+                                        let highest = 0;
+                                        let i = 0;
+                                        while (i < 7) {
+                                            if (highest < SCH[i].value && SCH[i].value !== value) {
+                                                highest = SCH[i].value;
+                                            }
+                                            i++;
+                                        }
+                                        handata[2] = highest;
+                                        handata[3] = 0;
+                                        handata[4] = 0;
+                                        handata[5] = 0;
+                                        break;
+                                    }
+                                    quadscount = 0;
+                                }
+                            }
+                            let tripsvalue = 0;
+                            if (handata[0] < 8) {
+                                let tripscount = 0;
+
+                                for (let ii = 0; ii < 5; ii++) {
+                                    tripsvalue = SCH[ii].value;
+                                    for (let i = 0; i < 7; i++) {
+                                        if (SCH[i].value === tripsvalue) {
+                                            tripscount++;
+                                        }
+                                    }
+                                    if (tripscount === 3) {
+                                        istrips = 1;
+                                        for (let k = 0; k < 7; k++) {
+                                            let paircount = 0;
+                                            pairval = SCH[k].value;
+                                            if (pairval === tripsvalue) {
+                                                k += 3;
+                                                if (k > 6) {
+                                                    break;
+                                                }
+                                                pairval = SCH[k].value;
+                                            }
+                                            for (let kk = 0; kk < 7; kk++) {
+                                                if (pairval === SCH[kk].value) {
+                                                    paircount++;
+                                                }
+                                            }
+                                            if (paircount > 1) {
+                                                isboat = 1;
+                                                handata[0] = 7;
+                                                handata[1] = tripsvalue;
+                                                handata[2] = pairval;
+                                                handata[3] = 0;
+                                                handata[4] = 0;
+                                                handata[5] = 0;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (istrips) {
+                                        break;
+                                    }
+                                    tripscount = 0;
+                                }
+                            }
+
+
+
+                            // assigns flush
+                            if (handata[0] < 6 && isflush) {
+                                handata[0] = 6;
+                                handata[1] = flush_array[0].value;
+                                handata[2] = flush_array[1].value;
+                                handata[3] = flush_array[2].value;
+                                handata[4] = flush_array[3].value;
+                                handata[5] = flush_array[4].value;
+                            }
+                            // assigns straight
+                            if (handata[0] < 5) {
+                                let is_odd_case = 0;
+                                let curval = SCH[0].value;
+                                let straightcount = 0;
+                                let i = 0;
+                                while (i < 7 && straightcount < 5 && !(is_odd_case && straightcount == 4)) {
+                                    if (curval == SCH[i].value) {
+                                        if (curval == 5 && SCH[0].value == 14 && straightcount == 0) {
+                                            is_odd_case = 1;
+                                        }
+                                        straightcount++;
+                                        handata[straightcount] = curval;
+                                        i++;
+                                        while (i < 7 && SCH[i].value == curval) {
+                                            i++;
+                                            
+                                        }
+                                        curval--;
+                                    } else {
+                                        straightcount = 0;
+                                        curval = SCH[i].value;
+                                        is_odd_case = 0;
+                                    }
+                                }
+                                if (straightcount == 5 || (is_odd_case && straightcount == 4)) {
+                                
+                                    handata[0] = 5;
+                                    if (is_odd_case) {
+                                        handata[1] = 5;
+                                        handata[2] = 4;
+                                        handata[3] = 3;
+                                        handata[4] = 2;
+                                        handata[5] = 1;
+                                    }
+                                }
+                            }
+                            // assigns trips
+                            if (istrips && handata[0] < 4) {
+                                handata[0] = 4;
+                                handata[1] = tripsvalue;
+                                let k = 0;
+                                if (SCH[k].value == tripsvalue) {
+                                    k += 3;
+                                }
+                                let kicker = SCH[k].value;
+                                k++;
+                                if (SCH[k].value == tripsvalue) {
+                                    k += 3;
+                                }
+                                let kicker2 = SCH[k].value;
+                                handata[2] = kicker;
+                                handata[3] = kicker2;
+                                handata[4] = 0;
+                                handata[5] = 0;
+                            }
+                            // check and assign for two pair and then if not check and assign for pair
+                            if (handata[0] < 3) {
+                                let first_pairval = 0;
+                                let second_pairval = 0;
+                                let first_pair_count = 0;
+                                let second_pair_count = 0;
+                                for (let f = 0; f < 6; f++) {
+                                    first_pairval = SCH[f].value;
+                                    first_pair_count = 0;
+                                    for (let ff = 0; ff < 7; ff++) {
+                                        if (first_pairval == SCH[ff].value) {
+                                            first_pair_count++;
+                                        }
+                                    }
+                                    if (first_pair_count == 2) {
+                                        ispair = 1;
+                                        let r = 0;
+                                        second_pair_count = 0;
+                                        while (r < 7) {
+                                            if (SCH[r].value == first_pairval) {
+                                                r++;
+                                            } else {
+                                                second_pairval = SCH[r].value;
+                                                for (let ff = 0; ff < 7; ff++) {
+                                                    if (second_pairval == SCH[ff].value) {
+                                                        second_pair_count++;
+                                                    }
+                                                }
+                                                if (second_pair_count == 2) {
+                                                    istwopair = 1;
+                                                    break;
+                                                } else {
+                                                    r++;
+                                                    second_pair_count = 0;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                if (istwopair) {
+                                    handata[0] = 3;
+                                    handata[1] = first_pairval;
+                                    handata[2] = second_pairval;
+                                    let kicker3 = 0;
+                                    for (let o = 0; o < 7; o++) {
+                                        if (kicker3 < SCH[o].value && SCH[o].value != first_pairval && SCH[o].value != second_pairval) {
+                                            kicker3 = SCH[o].value;
+                                        }
+                                    }
+                                    handata[3] = kicker3;
+                                    handata[4] = 0;
+                                    handata[5] = 0;
+                                } else if (ispair) {
+                                    handata[0] = 2;
+                                    handata[1] = first_pairval;
+                                    let cur_kicker = SCH[0].value;
+                                    let handata_idx = 2;
+                                    for (let i = 0; handata_idx < 5 && i < 7; i++) {
+                                        cur_kicker = SCH[i].value;
+                                        if (cur_kicker == first_pairval) {
+                                            i += 2;
+                                        }
+                                        cur_kicker = SCH[i].value;
+                                        handata[handata_idx] = cur_kicker;
+                                        handata_idx++;
+                                    }
+                                }
+                            }
+                            // if nothing else has been assigned then assign the value of high card
+                            if (handata[0] < 1) {
+                                handata[0] = 1;
+                                handata[1] = SCH[0].value;
+                                handata[2] = SCH[1].value;
+                                handata[3] = SCH[2].value;
+                                handata[4] = SCH[3].value;
+                                handata[5] = SCH[4].value;
+                            }
+                            for (let i = 0; i < 6; i++) {
+                                if (handata[i] > windata[i]) {
+                                    for (let g = 0; g < 7; g++) {
+                                        windata[g] = handata[g];
+                                    }
+                                    break;
+                                } else if (handata[i] < windata[i]) {
+                                    break;
+                                } else if (i == 5) {
+                                    windata[6] = 0;
+                                }
+                            }
+                            j++;
+                            }
+                            winner = windata[6];
+
+                            dubs[winner]++;
+                            //
+                            //
+                            //this algorithm increments each index to make
+                            //every possible combination of choose 5 from an array.
+                            //
+                            //
+                            const objects_in_set = 49 - NUMBER_of_PLAYERS * 2;
+                            
+                                        if (i1 === objects_in_set - 3) {
+                                            i0++;
+                                            if (i0 === objects_in_set - 4) {
+                                                break;
+                                            } else {
+                                                i1 = i0 + 1;
+                                                
+                                            }
+                                        }
+
+                            }
+                            let divisor = 0.000000;
+                            for (let i = 0; i <= NUMBER_of_PLAYERS; i++) {
+                            divisor += dubs[i];
+                            }
+
+
+                            var tie = 100*(dubs[0]/divisor);
+                            tie = tie.toFixed(2);
+                            for(var g = 1; g < 11; g++){document.getElementById("hand"+g+"win").classList = "notext";}
+                            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
+
+                            var num = 100*(dubs[t+1]/divisor);
+                            num = num.toFixed(2);
+                            document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
+                            document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Win: " + num.toString()+"%\r\nTie: "+tie+"%";
+
+                            }
+
+                            },30);
+
+
+
+                            }
+    </script>
+</body>
+</html>
