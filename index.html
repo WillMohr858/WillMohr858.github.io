@@ -579,8 +579,27 @@
 
 
                 if(callPFB != 1){
+                    var flopcardstr = "flopcard1";
                   for(var b = 1; b < 4; b++){
-                    var flopcardstr = "flopcard"+b;
+                    flopcardstr = flopcardstr.slice(0,8)+b;
+                    var flopcard = document.getElementById(flopcardstr);
+                    var flopcardcomp = window.getComputedStyle(flopcard);
+                    if(flopcardcomp.getPropertyValue('border-color') === 'rgb(255, 255, 0)'){
+                        if(flopcard.classList.contains('full')){
+                            var sendback = card.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                        }
+
+                        flopcard.style.backgroundImage = "url('largecards/" + spliced + ".png')";
+                        flopcard.classList = "full";
+
+                        //add code to check if the flop is full and if it is call PostFB();
+
+                        break;
+                    }
                   }
                 }
                 
