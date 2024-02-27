@@ -352,6 +352,12 @@
                 card = document.getElementById("flopcard3");
                 card.style.border ="2px solid black";
 
+                card = document.getElementById("turncard1");
+                card.style.border ="2px solid black";
+
+                card = document.getElementById("rivercard1");
+                card.style.border ="2px solid black";
+
 
 
                 
@@ -377,11 +383,11 @@
         </div>
 
         <div id="turn" class="turn" style="margin-top: 200px;">
-            <div id="turncard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;"></div>
+            <div id="turncard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick="Display_change(-4,1)"></div>
         </div>
 
         <div id="river" class="river" style="margin-top: 200px;">
-            <div id="rivercard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;"></div>
+            <div id="rivercard1" class = "empty" style = "margin-left: 1px; margin-top: 1px;" onclick="Display_change(-5,1)"></div>
         </div>
 
 
@@ -520,7 +526,7 @@
             var str = 'card1';
             var spliced = img.slice(6, -4);
             var callPFB = 0;
-            var callPost = 0;
+            //give player card if highlighted
             if(document.getElementById(spliced).classList == 'deck_full'){
                 for(var i =1; i < 21; i++){
                     str = str.slice(0,4)+i;
@@ -578,7 +584,7 @@
                 }
 
 
-
+                //give flop a card if highlighted
                 if(callPFB != 1){
                   var flopcardstr = "flopcard1";
                   for(var b = 1; b < 4; b++){
@@ -599,24 +605,24 @@
 
                         
                       
-                        //add code to check if the flop is full and if it is call PostFB();
+                      
                         if(b == 1){
                           var flopcard2 = document.getElementById("flopcard2");
                           var flopcard3 = document.getElementById("flopcard3");
                           if(flopcard2.classList.contains('full') && flopcard3.classList.contains('full')){
-                            callPost = 1;
+                            callPFB = 1;
                           }
                         }else if(b == 2){
                           var flopcard1 = document.getElementById("flopcard1");
                           var flopcard3 = document.getElementById("flopcard3");
                           if(flopcard1.classList.contains('full') && flopcard3.classList.contains('full')){
-                            callPost = 1;
+                            callPFB = 1;
                           }
                         }else{
                           var flopcard2 = document.getElementById("flopcard2");
                           var flopcard1 = document.getElementById("flopcard1");
                           if(flopcard1.classList.contains('full') && flopcard2.classList.contains('full')){
-                            callPost = 1;
+                            callPFB = 1;
                           }
                         }
                       
@@ -629,12 +635,79 @@
                     }
                   }
                 }
+
+                //give turn card if highlighted
+                if(callPFB != 1){
+                  
+                  
+                    
+                    var turncard = document.getElementById("turncard1");
+                    var turncardcomp = window.getComputedStyle(turncard);
+                    if(turncardcomp.getPropertyValue('border-color') === 'rgb(255, 255, 0)'){
+                        if(turncard.classList.contains('full')){
+                            var sendback = turncard.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                        }
+
+                        turncard.style.backgroundImage = "url('largecards/" + spliced + ".png')";
+                        turncard.classList = "full";
+                        callPFB = 1;
+                        
+                      
+                        
+                      
+                        Display_change(-5,0);
+
+                        var deckcard = document.getElementById(spliced);
+                        deckcard.classList = "deck_empty";
+                        deckcard.style.backgroundImage = "none";
+                     
+                    }
+                  
+                }
+
+
+                //give river card if highlighted
+                if(callPFB != 1){
+                  
+                  
+                    
+                  var rivercard = document.getElementById("rivercard1");
+                  var rivercardcomp = window.getComputedStyle(rivercard);
+                  if(rivercardcomp.getPropertyValue('border-color') === 'rgb(255, 255, 0)'){
+                      if(rivercard.classList.contains('full')){
+                          var sendback = rivercard.style.backgroundImage;
+                          sendback = sendback.slice(16,-6);
+                          var empdeckcard = document.getElementById(sendback);
+                          empdeckcard.classList = "deck_full";
+                          empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                      }
+
+                      rivercard.style.backgroundImage = "url('largecards/" + spliced + ".png')";
+                      rivercard.classList = "full";
+                      callPFB = 1;
+                      
+                    
+                      
+                    
+                      Display_change(-5,0);
+
+                      var deckcard = document.getElementById(spliced);
+                      deckcard.classList = "deck_empty";
+                      deckcard.style.backgroundImage = "none";
+                   
+                  }
+                
+              }
+
+
                 
             }
             if(callPFB == 1){
                 setTimeout(PFB, 50);
-            }else if(callPost == 1){
-                //setTimeout(PostFB, 50);
             }
             
         }
@@ -646,11 +719,70 @@
               reset();
               return;
             }
-            if(num == -4){
+            if(num == -6){
               reset();
               return;
             }
-            if(num < 0){
+
+            if(num == -5 ){
+              
+              var rivercard = document.getElementById("rivercard1");
+              if(sendback == 1 && rivercard.classList.contains('full')){
+                          var sendback = rivercard.style.backgroundImage;
+                          sendback = sendback.slice(16,-6);
+                          var empdeckcard = document.getElementById(sendback);
+                          empdeckcard.classList = "deck_full";
+                          empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                          rivercard.style.backgroundImage = "url('empty_card.jpg')";
+                          rivercard.classList = "empty";
+                          setTimeout(PFB, 50);
+                          
+              }
+
+
+
+              var card1 = document.getElementById("rivercard1");
+              var card1comp = window.getComputedStyle(card1);
+              if(card1comp.getPropertyValue('border-color') === 'rgb(0, 0, 0)'){
+                  reset();
+                  card1.style.border ="2px solid yellow";
+                  
+              }else{
+                  reset();
+              }
+              return;
+            }
+
+            if(num == -4 ){
+              
+                var turncard = document.getElementById("turncard1");
+                if(sendback == 1 && turncard.classList.contains('full')){
+                            var sendback = turncard.style.backgroundImage;
+                            sendback = sendback.slice(16,-6);
+                            var empdeckcard = document.getElementById(sendback);
+                            empdeckcard.classList = "deck_full";
+                            empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
+                            turncard.style.backgroundImage = "url('empty_card.jpg')";
+                            turncard.classList = "empty";
+                            setTimeout(PFB, 50);
+                            
+                }
+
+
+
+                var card1 = document.getElementById("turncard1");
+                var card1comp = window.getComputedStyle(card1);
+                if(card1comp.getPropertyValue('border-color') === 'rgb(0, 0, 0)'){
+                    reset();
+                    card1.style.border ="2px solid yellow";
+                    
+                }else{
+                    reset();
+                }
+                return;
+            }
+
+            if(-4 < num && num < 0){
                 var flopcardstr = "flopcard"+(num*-1);
                 var flopcard = document.getElementById(flopcardstr);
                 if(sendback == 1 && flopcard.classList.contains('full')){
@@ -661,6 +793,7 @@
                             empdeckcard.style.backgroundImage = "url('cards/"+sendback+".jpg";
                             flopcard.style.backgroundImage = "url('empty_card.jpg')";
                             flopcard.classList = "empty";
+                            setTimeout(PFB, 50);
                             
                 }
 
@@ -794,6 +927,14 @@
                         
                             }
 
+
+
+                            var preflop = 0;
+                            var postflop = 0;
+                            var postturn = 0;
+                            var postriver = 0;
+
+
                             let starting_hands = [];
                             let starting_hand_nums = [];
                             let starting_hand_nums_idx = 0;
@@ -805,7 +946,7 @@
                                 var curhand = document.getElementById(str);
                                 if(curhand.classList == "complete_hand"){
                                     NUMBER_of_PLAYERS++;
-                                    let comphand = [];
+                                    var comphand = [];
                                     var list = curhand.querySelectorAll('div');
 
                                     var val1 = 0;
@@ -857,8 +998,105 @@
                                 
 
                             }
+
                             
+                           
+                                
+
+                            //checks if the flop is full
+                            //builds flop with card class format
+                            if( document.getElementById("flopcard1").classList.contains("full") && document.getElementById("flopcard2").classList.contains("full") && document.getElementById("flopcard3").classList.contains("full")){
+                            postflop = 1;
+                            var flop = [];
+                            var fullflop = document.getElementById("flop");
+                            var floplist = fullflop.querySelectorAll('div');
+                            var val1 = 0;
+                            var suit1 = floplist[0].style.backgroundImage.slice(16,19);
+                            
+                                if( !(/^[CSHD]+$/.test(suit1[1])) ){
+                                    val1 = parseInt(suit1.slice(0,2));
+                                    suit1 = suit1.slice(2,3);
+                                }else{
+                                    val1 = parseInt(suit1.slice(0,1));
+                                    suit1 = suit1.slice(1,2);
+                                }
+
+                            
+                            var val2 = 0;
+                            var suit2 = floplist[1].style.backgroundImage.slice(16,19);
+                                if(!(/^[CSHD]+$/.test(suit2[1]))  ){
+                                    val2 = parseInt(suit2.slice(0,2));
+                                    suit2 = suit2.slice(2,3);
+                                }else{
+                                    val2 = parseInt(suit2.slice(0,1));
+                                    suit2 = suit2.slice(1,2);
+                                }
+
+
+                            var val3 = 0;
+                            var suit3 = floplist[2].style.backgroundImage.slice(16,19);
+                                if(!(/^[CSHD]+$/.test(suit3[1]))  ){
+                                    val3 = parseInt(suit3.slice(0,2));
+                                    suit3 = suit3.slice(2,3);
+                                }else{
+                                    val3 = parseInt(suit3.slice(0,1));
+                                    suit3 = suit3.slice(1,2);
+                                }
+                                suit1 = suit_str_to_int(suit1);
+                                suit2 = suit_str_to_int(suit2);
+                                suit3 = suit_str_to_int(suit3);
+                                flop.push(new card(val1,suit1));
+                                flop.push(new card(val2,suit2));
+                                flop.push(new card(val3,suit3));
+
+                                //checks if the turn is full
+                                //builds turn if so
+                                if(document.getElementById("turncard1").classList.contains("full")){
+                                    postturn = 1;
+                                    var turncard = document.getElementById("turncard1");
+                                    var turnval = 0;
+                                    var turnsuit = turncard.style.backgroundImage.slice(16,19);
+                            
+                                    if( !(/^[CSHD]+$/.test(turnsuit)) ){
+                                        turnval = parseInt(turnsuit.slice(0,2));
+                                        turnsuit = turnsuit.slice(2,3);
+                                    }else{
+                                        turnval = parseInt(turnsuit.slice(0,1));
+                                        turnsuit = turnsuit.slice(1,2);
+                                    }
+                                    turnsuit = suit_str_to_int(turnsuit);
+                                    var turn = new card(turnval,turnsuit);
+
+
+
+
+                                        //checks if the river is full
+                                        //builds river if so
+                                        if(document.getElementById("rivercard1").classList.contains("full")){
+                                            postriver = 1;
+                                            var riverval = 0;
+                                            var riversuit = document.getElementById("rivercard1").style.backgroundImage.slice(16,19);
+                                    
+                                            if( !(/^[CSHD]+$/.test(riversuit)) ){
+                                                riverval = parseInt(riversuit.slice(0,2));
+                                                riversuit = riversuit.slice(2,3);
+                                            }else{
+                                                riverval = parseInt(riversuit.slice(0,1));
+                                                riversuit = riversuit.slice(1,2);
+                                            }
+
+                                            var river = new card(riverval, riversuit);
+                                        }
+
+                                }
+                                
+                            }
+
+
+
+
         setTimeout(function(){
+            
                             const deck = [];
                                 i = 0;
                                 let val = 2;
@@ -880,6 +1118,26 @@
                                                 jj++;
                                             }
                                         }
+                                        if(postflop){
+                                            jj = 0;
+                                            while(jj < 3){
+                                                if(val === flop[jj].value && suit === flop[jj].suit){
+                                                    should_add = 0;
+                                                    break;
+                                                }
+                                                jj++;
+                                            }
+                                        }
+                                        if(postturn){
+                                            if(val === turn.value && suit === turn.suit){
+                                                    should_add = 0;
+                                            }
+                                        }
+                                        if(postriver){
+                                            if(val === river.value && suit === river.suit){
+                                                    should_add = 0;
+                                            }
+                                        }
                                         if (should_add) {
                                             let cur_c = new card(val,suit);
                                             deck[i] = cur_c;
@@ -896,19 +1154,57 @@
                             //Below builds every possible board and calls the find_winner function for each one.
                             const dubs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                             const board = [];
-                            let i0 = 0;
-                            let i1 = 1;
-                            let i2 = 2;
-                            let i3 = 3;
-                            let i4 = 4;
+                            if(postturn){
+                                
+                                var i4 = 0;
+                            }else if(postflop){
+                               
+                                var i3 = 0;
+                                var i4 = 1;
+                            }else if(!postriver){
+                                
+                                var i0 = 0;
+                                var i1 = 1;
+                                var i2 = 2;
+                                var i3 = 3;
+                                var i4 = 4;
+                            }
+                            
                             let winner = 0;
                             while (true) {  //this loop gets broken by the combination algorithm below when it has reached the final index
-                                board[0] = deck[i0];
-                                board[1] = deck[i1];
-                                board[2] = deck[i2];
-                                board[3] = deck[i3];
-                                board[4] = deck[i4];
-                            
+                                
+                                if(postriver){
+                                    board[0] = flop[0];
+                                    board[1] = flop[1];
+                                    board[2] = flop[2];
+                                    board[3] = turn;
+                                    board[4] = river;
+                                }else if(postturn){
+                                    board[0] = flop[0];
+                                    board[1] = flop[1];
+                                    board[2] = flop[2];
+                                    board[3] = turn;
+                                    board[4] = deck[i4];
+                                    for(let i = 0; i < 5; i++){
+                                        console.log(board[i].printcard()+"\n");
+                                    }
+                                }else if(postflop){
+                                    board[0] = flop[0];
+                                    board[1] = flop[1];
+                                    board[2] = flop[2];
+                                    board[3] = deck[i4];
+                                    board[4] = deck[i3];
+                                }else{
+                                    board[0] = deck[i0];
+                                    board[1] = deck[i1];
+                                    board[2] = deck[i2];
+                                    board[3] = deck[i3];
+                                    board[4] = deck[i4];
+                                }
+                                
+                                
+                                
+                               
                                 
 
                                 
@@ -1258,46 +1554,86 @@
                                 winner = windata[6];
                                 
                                 dubs[winner]++;
+                                
+                                var objects_in_set = 52 - NUMBER_of_PLAYERS * 2;
+                                if(postriver){
+                                    break;
+                                }else if(postturn){
+                                //
+                                //
+                                //this algorithm increments each index to make
+                                //every possible combination of choose 1 from an array.
+                                //
+                                //
+                                    objects_in_set = objects_in_set - 4;
+                                    i4++;
+                                    
+                                   
+                                    if(i4 == objects_in_set){
+                                        break;
+                                    }
+                                   
+                                }else if(postflop){
+                                //
+                                //
+                                //this algorithm increments each index to make
+                                //every possible combination of choose 2 from an array.
+                                //
+                                //
+                                
+                                    objects_in_set = objects_in_set -3;
+                                    if(i4 === objects_in_set - 1){
+                                        i3++;
+                                        if(i3 ===objects_in_set -1){
+                                            break;
+                                        }else{
+                                            i4 = i3 + 1; 
+                                        }
+                                    }else{
+                                        i4++;
+                                    }
+                                }else{ 
+                                    if (i4 === objects_in_set - 1) {
                                 //
                                 //
                                 //this algorithm increments each index to make
                                 //every possible combination of choose 5 from an array.
                                 //
                                 //
-                                const objects_in_set = 52 - NUMBER_of_PLAYERS * 2;
-                                if (i4 === objects_in_set - 1) {
-                                    i3++;
-                                    if (i3 === objects_in_set - 1) {
-                                        i2++;
-                                        if (i2 === objects_in_set - 2) {
-                                            i1++;
-                                            if (i1 === objects_in_set - 3) {
-                                                i0++;
-                                                if (i0 === objects_in_set - 4) {
-                                                    break;
+                                                i3++;
+                                                if (i3 === objects_in_set - 1) {
+                                                    i2++;
+                                                    if (i2 === objects_in_set - 2) {
+                                                        i1++;
+                                                        if (i1 === objects_in_set - 3) {
+                                                            i0++;
+                                                            if (i0 === objects_in_set - 4) {
+                                                                break;
+                                                            } else {
+                                                                i1 = i0 + 1;
+                                                                i2 = i1 + 1;
+                                                                i3 = i2 + 1;
+                                                                i4 = i3 + 1;
+                                                            }
+                                                        } else {
+                                                            i2 = i1 + 1;
+                                                            i3 = i2 + 1;
+                                                            i4 = i3 + 1;
+                                                        }
+                                                    } else {
+                                                        i3 = i2 + 1;
+                                                        i4 = i3 + 1;
+                                                    }
                                                 } else {
-                                                    i1 = i0 + 1;
-                                                    i2 = i1 + 1;
-                                                    i3 = i2 + 1;
                                                     i4 = i3 + 1;
                                                 }
                                             } else {
-                                                i2 = i1 + 1;
-                                                i3 = i2 + 1;
-                                                i4 = i3 + 1;
+                                                i4++;
                                             }
-                                        } else {
-                                            i3 = i2 + 1;
-                                            i4 = i3 + 1;
-                                        }
-                                    } else {
-                                        i4 = i3 + 1;
-                                    }
-                                } else {
-                                    i4++;
-                                }
                                 
-                            }
+                                }
+                               
+                        }
                             let divisor = 0.000000;
                             for (let i = 0; i <= NUMBER_of_PLAYERS; i++) {
                                 divisor += dubs[i];
@@ -1325,603 +1661,7 @@
 
 
 
-                        function PostFB() {
-
-                                                            
-                            function suit_str_to_int(str) {
-                                if (str == 'S') {
-                                    return 1;
-                                } else if (str == 'C') {
-                                    return 2;
-                                } else if (str == 'D') {
-                                    return 3;
-                                } else if (str == 'H') {
-                                    return 4;
-                                } else {
-                                    return -1;
-                                }
-                            }
-
-                                    class card {
-                            constructor(value, suit) {
-                                this.value = value;
-                                this.suit = suit;
-                            }
-
-                            printcard() {
-                                
-
-                                let suit;
-                                if (this.suit === 1) {
-                                    suit = 'S';
-                                } else if (this.suit === 2) {
-                                    suit = 'C';
-                                } else if (this.suit === 3) {
-                                    suit = 'D';
-                                } else if (this.suit === 4) {
-                                    suit = 'H';
-                                } else {
-                                    suit = '?';
-                                }
-                            return this.value + suit;
-                            }
-
-
-                            }
-
-                            let starting_hands = [];
-                            let starting_hand_nums = [];
-                            let starting_hand_nums_idx = 0;
-                            var NUMBER_of_PLAYERS = 0;
-                            var str = "hand";
-                            for(var i = 1; i < 11; i++){
-
-                            str = str+i;
-                            var curhand = document.getElementById(str);
-                            if(curhand.classList == "complete_hand"){
-                                NUMBER_of_PLAYERS++;
-                                let comphand = [];
-                                var list = curhand.querySelectorAll('div');
-
-                                var val1 = 0;
-                                var suit1 = list[0].style.backgroundImage.slice(16,19);
-                            
-                                if( !(/^[CSHD]+$/.test(suit1[1])) ){
-                                    val1 = parseInt(suit1.slice(0,2));
-                                    suit1 = suit1.slice(2,3);
-                                }else{
-                                    val1 = parseInt(suit1.slice(0,1));
-                                    suit1 = suit1.slice(1,2);
-                                }
-
-                                var val2 = 0;
-                                var suit2 = list[1].style.backgroundImage.slice(16,19);
-                                if(!(/^[CSHD]+$/.test(suit2[1]))  ){
-                                    val2 = parseInt(suit2.slice(0,2));
-                                    suit2 = suit2.slice(2,3);
-                                }else{
-                                    val2 = parseInt(suit2.slice(0,1));
-                                    suit2 = suit2.slice(1,2);
-                                }
-                                suit1 = suit_str_to_int(suit1);
-                                suit2 = suit_str_to_int(suit2);
-                                comphand.push(new card(val1,suit1));
-                                comphand.push(new card(val2,suit2));
-                                
-                                starting_hands.push(comphand);
-                                starting_hand_nums[starting_hand_nums_idx] = i;  
-                                starting_hand_nums_idx++;
-                                
-                            }
-
-                            str = str.slice(0,4);
-
-                            }
-
-
-
-                            if(NUMBER_of_PLAYERS <= 1){
-                            return;
-                            }
-                            let flop = [];
-                            var fullflop = document.getElementById("flop");
-                            var floplist = fullflop.querySelectorAll('div');
-                            var val1 = 0;
-                                var suit1 = floplist[0].style.backgroundImage.slice(16,19);
-                            
-                                if( !(/^[CSHD]+$/.test(suit1[1])) ){
-                                    val1 = parseInt(suit1.slice(0,2));
-                                    suit1 = suit1.slice(2,3);
-                                }else{
-                                    val1 = parseInt(suit1.slice(0,1));
-                                    suit1 = suit1.slice(1,2);
-                                }
-
-                            
-                            var val2 = 0;
-                            var suit2 = floplist[1].style.backgroundImage.slice(16,19);
-                                if(!(/^[CSHD]+$/.test(suit2[1]))  ){
-                                    val2 = parseInt(suit2.slice(0,2));
-                                    suit2 = suit2.slice(2,3);
-                                }else{
-                                    val2 = parseInt(suit2.slice(0,1));
-                                    suit2 = suit2.slice(1,2);
-                                }
-
-
-                            var val3 = 0;
-                            var suit3 = floplist[2].style.backgroundImage.slice(16,19);
-                                if(!(/^[CSHD]+$/.test(suit3[1]))  ){
-                                    val3 = parseInt(suit3.slice(0,2));
-                                    suit3 = suit3.slice(2,3);
-                                }else{
-                                    val3 = parseInt(suit3.slice(0,1));
-                                    suit3 = suit3.slice(1,2);
-                                }
-                                suit1 = suit_str_to_int(suit1);
-                                suit2 = suit_str_to_int(suit2);
-                                suit3 = suit_str_to_int(suit3);
-                                flop.push(new card(val1,suit1));
-                                flop.push(new card(val2,suit2));
-                                flop.push(new card(val3,suit3));
-                            
-
-                            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
-
-
-                            document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
-                            document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Loading...";
-
-
-                            }
-
-                            setTimeout(function(){
-                            const deck = [];
-                            i = 0;
-                            let val = 2;
-                            let suit = 1;
-                            while (suit < 5) {
-                                val = 2;
-                                while (val < 15) {
-                                    let should_add = 1;
-                                    let jj = 0;
-                                    let card_num = 0;
-                                    while (jj < NUMBER_of_PLAYERS) {
-                                        if (val === starting_hands[jj][card_num].value && suit === starting_hands[jj][card_num].suit) {
-                                            should_add = 0;
-                                            break;
-                                        }
-                                        card_num++;
-                                        if (card_num > 1) {
-                                            card_num = 0;
-                                            jj++;
-                                        }
-                                    }
-                                    jj = 0;
-                                    while(jj < 3){
-                                        if(val === flop[jj].value && suit === flop[jj].suit){
-                                            should_add = 0;
-                                            break;
-                                        }
-                                    }
-                                    if (should_add) {
-                                        let cur_c = new card(val,suit);
-                                        deck[i] = cur_c;
-                                        i++;
-                                    }
-                                    val++;
-                                }
-                                suit++;
-                            }
-
-
-
-
-                            //Below builds every possible board and calls the find_winner function for each one.
-                            const dubs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                            const board = [];
-                            let i0 = 0;
-                            let i1 = 1;
-                            
-                            let winner = 0;
-                            while (true) {  //this loop gets broken by the combination algorithm below when it has reached the final index
-                            board[0] = flop[0];
-                            board[1] = flop[1];
-                            board[2] = flop[2];
-                            board[3] = deck[i0];
-                            board[4] = deck[i1];
-
-
-
-
-
-                            let handata = new Array(7);
-                            let windata = new Array(7).fill(0);
-
-                            let j = 0;
-                            while (j < NUMBER_of_PLAYERS) {
-                            handata[0] = 0;
-                            handata[1] = 0;
-                            handata[2] = 0;
-                            handata[3] = 0;
-                            handata[4] = 0;
-                            handata[5] = 0;
-                            handata[6] = j + 1;
-                            let SCH_unsorted = new Array(7);
-                            SCH_unsorted[0] = board[0];
-                            SCH_unsorted[1] = board[1];
-                            SCH_unsorted[2] = board[2];
-                            SCH_unsorted[3] = board[3];
-                            SCH_unsorted[4] = board[4];
-                            SCH_unsorted[5] = starting_hands[j][0];
-                            SCH_unsorted[6] = starting_hands[j][1];
-                            let SCH = new Array(7);
-
-                            let cur_highest = 0;
-                            let prev_highest = 15;
-                            let l = 0;
-                            let isflush = 0;
-                            let isstraight = 0;
-                            let istwopair = 0;
-                            let ispair = 0;
-                            let istrips = 0;
-
-                            while (l < 7) {
-                                for (let i = 0; i < 7; i++) {
-                                    if (SCH_unsorted[i].value > cur_highest && SCH_unsorted[i].value < prev_highest) {
-                                        cur_highest = SCH_unsorted[i].value;
-                                        
-                                    }
-                                }
-                                for (let i = 0; i < 7; i++) {
-                                    if (SCH_unsorted[i].value === cur_highest) {
-                                    
-                                        SCH[l] =  SCH_unsorted[i];
-                                        l++;
-                                    }
-                                }
-                                prev_highest = cur_highest;
-                                cur_highest = 0;
-                            }
-
-                            let flush_array = new Array(7);
-                            for (let i = 0; i < 7; i++) {
-                                flush_array[i] = { value: 0, suit: 0 };
-                            }
-                            let cur_suit = 1;
-                            let suit_count = 0;
-                            while (cur_suit < 5) {
-                                for (let i = 0; i < 7; i++) {
-                                    if (SCH[i].suit === cur_suit) {
-                                        flush_array[suit_count] = SCH[i];
-                                        suit_count++;
-                                    }
-                                }
-                                if (suit_count > 4) {
-                                    isflush = 1;
-                                    break;
-                                } else if (suit_count > 2) {
-                                    break;
-                                }
-                                suit_count = 0;
-                                cur_suit++;
-                            }
-
-                            if (isflush) {
-                                let is_odd_case = 0;
-                                let curval = flush_array[0].value;
-                                let straightcount = 0;
-                                let i = 0;
-                                while (straightcount < 5 && !(is_odd_case && straightcount === 4) && i < 7 && flush_array[i].suit === cur_suit) {
-                                    if (curval === flush_array[i].value) {
-                                        if (curval === 5 && flush_array[0].value === 14 && straightcount === 0) {
-                                            is_odd_case = 1;
-                                        }
-                                        straightcount++;
-                                        handata[straightcount] = curval;
-                                        curval--;
-                                    } else {
-                                        straightcount = 0;
-                                        curval = flush_array[i].value;
-                                        is_odd_case = 0;
-                                        i--;
-                                    }
-                                    i++;
-                                }
-                                if (straightcount === 5 || (is_odd_case && straightcount === 4)) {
-                                    
-                                    handata[0] = 9;
-                                    if (is_odd_case && straightcount === 4) {
-                                        handata[1] = 5;
-                                        handata[2] = 4;
-                                        handata[3] = 3;
-                                        handata[4] = 2;
-                                        handata[5] = 1;
-                                    }
-                                }
-                            }
-                            if (handata[0] < 9) {
-                                let quadscount = 0;
-                                let value = 0;
-                                for (let i = 0; i < 7; i++) {
-                                    value = SCH[i].value;
-                                    for (let ii = 0; ii < 7; ii++) {
-                                        if (SCH[ii].value === value) {
-                                            quadscount++;
-                                        }
-                                    }
-                                    if (quadscount === 4) {
-                                    
-                                        handata[0] = 8;
-                                        handata[1] = value;
-                                        let highest = 0;
-                                        let i = 0;
-                                        while (i < 7) {
-                                            if (highest < SCH[i].value && SCH[i].value !== value) {
-                                                highest = SCH[i].value;
-                                            }
-                                            i++;
-                                        }
-                                        handata[2] = highest;
-                                        handata[3] = 0;
-                                        handata[4] = 0;
-                                        handata[5] = 0;
-                                        break;
-                                    }
-                                    quadscount = 0;
-                                }
-                            }
-                            let tripsvalue = 0;
-                            if (handata[0] < 8) {
-                                let tripscount = 0;
-
-                                for (let ii = 0; ii < 5; ii++) {
-                                    tripsvalue = SCH[ii].value;
-                                    for (let i = 0; i < 7; i++) {
-                                        if (SCH[i].value === tripsvalue) {
-                                            tripscount++;
-                                        }
-                                    }
-                                    if (tripscount === 3) {
-                                        istrips = 1;
-                                        for (let k = 0; k < 7; k++) {
-                                            let paircount = 0;
-                                            pairval = SCH[k].value;
-                                            if (pairval === tripsvalue) {
-                                                k += 3;
-                                                if (k > 6) {
-                                                    break;
-                                                }
-                                                pairval = SCH[k].value;
-                                            }
-                                            for (let kk = 0; kk < 7; kk++) {
-                                                if (pairval === SCH[kk].value) {
-                                                    paircount++;
-                                                }
-                                            }
-                                            if (paircount > 1) {
-                                                isboat = 1;
-                                                handata[0] = 7;
-                                                handata[1] = tripsvalue;
-                                                handata[2] = pairval;
-                                                handata[3] = 0;
-                                                handata[4] = 0;
-                                                handata[5] = 0;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (istrips) {
-                                        break;
-                                    }
-                                    tripscount = 0;
-                                }
-                            }
-
-
-
-                            // assigns flush
-                            if (handata[0] < 6 && isflush) {
-                                handata[0] = 6;
-                                handata[1] = flush_array[0].value;
-                                handata[2] = flush_array[1].value;
-                                handata[3] = flush_array[2].value;
-                                handata[4] = flush_array[3].value;
-                                handata[5] = flush_array[4].value;
-                            }
-                            // assigns straight
-                            if (handata[0] < 5) {
-                                let is_odd_case = 0;
-                                let curval = SCH[0].value;
-                                let straightcount = 0;
-                                let i = 0;
-                                while (i < 7 && straightcount < 5 && !(is_odd_case && straightcount == 4)) {
-                                    if (curval == SCH[i].value) {
-                                        if (curval == 5 && SCH[0].value == 14 && straightcount == 0) {
-                                            is_odd_case = 1;
-                                        }
-                                        straightcount++;
-                                        handata[straightcount] = curval;
-                                        i++;
-                                        while (i < 7 && SCH[i].value == curval) {
-                                            i++;
-                                            
-                                        }
-                                        curval--;
-                                    } else {
-                                        straightcount = 0;
-                                        curval = SCH[i].value;
-                                        is_odd_case = 0;
-                                    }
-                                }
-                                if (straightcount == 5 || (is_odd_case && straightcount == 4)) {
-                                
-                                    handata[0] = 5;
-                                    if (is_odd_case) {
-                                        handata[1] = 5;
-                                        handata[2] = 4;
-                                        handata[3] = 3;
-                                        handata[4] = 2;
-                                        handata[5] = 1;
-                                    }
-                                }
-                            }
-                            // assigns trips
-                            if (istrips && handata[0] < 4) {
-                                handata[0] = 4;
-                                handata[1] = tripsvalue;
-                                let k = 0;
-                                if (SCH[k].value == tripsvalue) {
-                                    k += 3;
-                                }
-                                let kicker = SCH[k].value;
-                                k++;
-                                if (SCH[k].value == tripsvalue) {
-                                    k += 3;
-                                }
-                                let kicker2 = SCH[k].value;
-                                handata[2] = kicker;
-                                handata[3] = kicker2;
-                                handata[4] = 0;
-                                handata[5] = 0;
-                            }
-                            // check and assign for two pair and then if not check and assign for pair
-                            if (handata[0] < 3) {
-                                let first_pairval = 0;
-                                let second_pairval = 0;
-                                let first_pair_count = 0;
-                                let second_pair_count = 0;
-                                for (let f = 0; f < 6; f++) {
-                                    first_pairval = SCH[f].value;
-                                    first_pair_count = 0;
-                                    for (let ff = 0; ff < 7; ff++) {
-                                        if (first_pairval == SCH[ff].value) {
-                                            first_pair_count++;
-                                        }
-                                    }
-                                    if (first_pair_count == 2) {
-                                        ispair = 1;
-                                        let r = 0;
-                                        second_pair_count = 0;
-                                        while (r < 7) {
-                                            if (SCH[r].value == first_pairval) {
-                                                r++;
-                                            } else {
-                                                second_pairval = SCH[r].value;
-                                                for (let ff = 0; ff < 7; ff++) {
-                                                    if (second_pairval == SCH[ff].value) {
-                                                        second_pair_count++;
-                                                    }
-                                                }
-                                                if (second_pair_count == 2) {
-                                                    istwopair = 1;
-                                                    break;
-                                                } else {
-                                                    r++;
-                                                    second_pair_count = 0;
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    }
-                                }
-                                if (istwopair) {
-                                    handata[0] = 3;
-                                    handata[1] = first_pairval;
-                                    handata[2] = second_pairval;
-                                    let kicker3 = 0;
-                                    for (let o = 0; o < 7; o++) {
-                                        if (kicker3 < SCH[o].value && SCH[o].value != first_pairval && SCH[o].value != second_pairval) {
-                                            kicker3 = SCH[o].value;
-                                        }
-                                    }
-                                    handata[3] = kicker3;
-                                    handata[4] = 0;
-                                    handata[5] = 0;
-                                } else if (ispair) {
-                                    handata[0] = 2;
-                                    handata[1] = first_pairval;
-                                    let cur_kicker = SCH[0].value;
-                                    let handata_idx = 2;
-                                    for (let i = 0; handata_idx < 5 && i < 7; i++) {
-                                        cur_kicker = SCH[i].value;
-                                        if (cur_kicker == first_pairval) {
-                                            i += 2;
-                                        }
-                                        cur_kicker = SCH[i].value;
-                                        handata[handata_idx] = cur_kicker;
-                                        handata_idx++;
-                                    }
-                                }
-                            }
-                            // if nothing else has been assigned then assign the value of high card
-                            if (handata[0] < 1) {
-                                handata[0] = 1;
-                                handata[1] = SCH[0].value;
-                                handata[2] = SCH[1].value;
-                                handata[3] = SCH[2].value;
-                                handata[4] = SCH[3].value;
-                                handata[5] = SCH[4].value;
-                            }
-                            for (let i = 0; i < 6; i++) {
-                                if (handata[i] > windata[i]) {
-                                    for (let g = 0; g < 7; g++) {
-                                        windata[g] = handata[g];
-                                    }
-                                    break;
-                                } else if (handata[i] < windata[i]) {
-                                    break;
-                                } else if (i == 5) {
-                                    windata[6] = 0;
-                                }
-                            }
-                            j++;
-                            }
-                            winner = windata[6];
-
-                            dubs[winner]++;
-                            //
-                            //
-                            //this algorithm increments each index to make
-                            //every possible combination of choose 5 from an array.
-                            //
-                            //
-                            const objects_in_set = 49 - NUMBER_of_PLAYERS * 2;
-                            
-                                        if (i1 === objects_in_set - 3) {
-                                            i0++;
-                                            if (i0 === objects_in_set - 4) {
-                                                break;
-                                            } else {
-                                                i1 = i0 + 1;
-                                                
-                                            }
-                                        }
-
-                            }
-                            let divisor = 0.000000;
-                            for (let i = 0; i <= NUMBER_of_PLAYERS; i++) {
-                            divisor += dubs[i];
-                            }
-
-
-                            var tie = 100*(dubs[0]/divisor);
-                            tie = tie.toFixed(2);
-                            for(var g = 1; g < 11; g++){document.getElementById("hand"+g+"win").classList = "notext";}
-                            for(var t = 0; t < NUMBER_of_PLAYERS; t++){
-
-                            var num = 100*(dubs[t+1]/divisor);
-                            num = num.toFixed(2);
-                            document.getElementById("hand"+starting_hand_nums[t]+"win").classList = "wintext";
-                            document.getElementById("hand"+starting_hand_nums[t]+"win").textContent = "Win: " + num.toString()+"%\r\nTie: "+tie+"%";
-
-                            }
-
-                            },30);
-
-
-
-                            }
+                       
     </script>
 </body>
 </html>
