@@ -1057,7 +1057,7 @@
                                     var turnval = 0;
                                     var turnsuit = turncard.style.backgroundImage.slice(16,19);
                             
-                                    if( !(/^[CSHD]+$/.test(turnsuit)) ){
+                                    if( !(/^[CSHD]+$/.test(turnsuit[1])) ){
                                         turnval = parseInt(turnsuit.slice(0,2));
                                         turnsuit = turnsuit.slice(2,3);
                                     }else{
@@ -1077,14 +1077,14 @@
                                             var riverval = 0;
                                             var riversuit = document.getElementById("rivercard1").style.backgroundImage.slice(16,19);
                                     
-                                            if( !(/^[CSHD]+$/.test(riversuit)) ){
+                                            if( !(/^[CSHD]+$/.test(riversuit[1])) ){
                                                 riverval = parseInt(riversuit.slice(0,2));
                                                 riversuit = riversuit.slice(2,3);
                                             }else{
                                                 riverval = parseInt(riversuit.slice(0,1));
                                                 riversuit = riversuit.slice(1,2);
                                             }
-
+                                            riversuit = suit_str_to_int(riversuit);
                                             var river = new card(riverval, riversuit);
                                         }
 
@@ -1555,6 +1555,7 @@
                                 
                                 var objects_in_set = 52 - NUMBER_of_PLAYERS * 2;
                                 if(postriver){
+                                    
                                     break;
                                 }else if(postturn){
                                 //
